@@ -1,6 +1,268 @@
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
-  margin: 2rem;
-  background-color: #fdfdfd;
+  background-color: #efe9e1;
   color: #333;
 }
+
+header {
+  background-color: #37363b;
+  color: #f2bc6c;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cta-button {
+  display: block;
+  width: max-content;
+  margin: 2rem auto;
+  padding: 0.8rem 1.5rem;
+  background-color: #ffff;
+  color: #222;
+  font-weight: bold;
+  border: 1px solid;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #e0a800;
+}
+
+.content-section {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.info-card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex: 1 1 30%;
+  min-width: 280px;
+}
+
+.slideshow-container {
+  max-width: 800px;
+  position: relative;
+  margin: auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.mySlides {
+  display: none;
+}
+
+img {
+  vertical-align: middle;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.fade {
+  animation: fade 1s ease-in-out;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #717171;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .content-section {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+
+  .info-card {
+    flex: 1 1 100% !important; 
+    min-width: 100% !important;
+  }
+
+  .cta-button {
+    margin: 1.5rem auto;
+    padding: 0.7rem 1.2rem;
+  }
+
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+}
+
+  
+  /* * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #efe9e1;
+      color: #333;
+    }
+
+    header {
+      background-color: #37363b;
+      color: #f2bc6c;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .cta-button {
+      display: block;
+      width: max-content;
+      margin: 2rem auto;
+      padding: 0.8rem 1.5rem;
+      background-color: #FFFF;
+      color: #222;
+      font-weight: bold;
+      border: 1px solid;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #e0a800;
+    }
+
+    .content-section {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .info-card {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex: 1 1 30%;
+      min-width: 280px;
+    }
+
+    .slideshow-container {
+  max-width: 800px;
+  position: relative;
+  margin: auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.mySlides {
+  display: none;
+}
+
+img {
+  vertical-align: middle;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.fade {
+  animation: fade 1s ease-in-out;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #717171;
+} */
