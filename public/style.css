@@ -10,6 +10,10 @@ body {
   color: #333;
 }
 
+html, body {
+  height: 100%;
+}
+
 header {
   background-color: #37363b;
   color: #f2bc6c;
@@ -117,3 +121,104 @@ img {
 .active {
   background-color: #717171;
 }
+
+.site-footer {
+  background-color: #333;
+  color: #f2f2f2;
+  padding: 1rem 0;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.site-footer p {
+  margin: 0.2rem;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.family-main {
+  padding: 2rem;
+  background-color: #f9f9f9;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.2rem;
+}
+
+.page-subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.filter-section {
+  padding: 1rem;
+}
+
+.filter-section form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+}
+
+.dropdown-group {
+  flex: 1 1 30%;
+  min-width: 0;
+}
+
+.dropdown-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.dropdown-group select {
+   width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.filter-btn {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.family-list {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.no-data {
+  color: #888;
+  font-size: 1.1rem;
+}
+
+@media (min-width: 600px) {
+  .dropdown-group {
+    flex: 1 1 calc(33.33% - 1rem);
+  }
+
+  .filter-btn {
+    width: auto;
+  }
+}
+
