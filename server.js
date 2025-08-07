@@ -29,6 +29,9 @@ app.get('/', (req, res) => {
 app.get('/family', (req, res) => {
   res.render('family'); 
 });
+app.get('/admin/login', (req, res) => {
+  res.render('admin');
+});
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);

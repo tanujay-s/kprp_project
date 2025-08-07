@@ -1,0 +1,51 @@
+<%- include('shared/header') %>
+
+<main class="admin-member-form-container">
+  <h2 class="form-title">Add Members</h2>
+  <form action="/admin/add-member" method="POST" class="admin-member-form">
+    <div class="form-group">
+      <label for="blockSelect">ब्लॉक:</label>
+      <select name="block" id="blockSelect" required>
+        <option value="">-- ब्लॉक चुनें --</option>
+        <option value="raniganj">रानीगंज</option>
+        <option value="babuganj">बाबूगंज</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="nyaySelect">न्याय पंचायत:</label>
+      <select name="nyay" id="nyaySelect" required>
+        <option value="">-- पहले ब्लॉक चुनें --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="villageSelect">गांव:</label>
+      <select name="village" id="villageSelect" required>
+        <option value="">-- पहले न्याय पंचायत चुनें --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="memberName">सदस्य का नाम:</label>
+      <input type="text" name="memberName" id="memberName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="relation">रिश्ता:</label>
+      <input type="text" name="relation" id="relation" required>
+    </div>
+
+    <div class="form-group">
+      <label for="familyDetails">परिवार की जानकारी:</label>
+      <textarea name="familyDetails" id="familyDetails" rows="4" required></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Add</button>
+    </div>
+  </form>
+</main>
+
+
+<%- include('shared/footer') %>

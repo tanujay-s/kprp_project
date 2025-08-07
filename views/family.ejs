@@ -5,7 +5,7 @@
   <h2 class="page-title">परिवार विवरण</h2>
   <p class="page-subtitle">क्षेत्र का चयन करें और संबंधित परिवारों को देखें</p>
 
-  <section class="filter-section">
+  <!-- <section class="filter-section">
     <form>
       <div class="dropdown-row">
         <div class="dropdown-group">
@@ -34,7 +34,42 @@
 
       <button type="submit" class="filter-btn" disabled>परिवार देखें</button>
     </form>
-  </section>
+  </section> -->
+<section class="admin-member-form-container">
+
+  <form class="admin-member-form">
+    <!-- Block Select -->
+    <div class="form-group">
+      <label for="blockSelect">ब्लॉक:</label>
+      <select id="blockSelect">
+        <option value="">-- ब्लॉक चुनें --</option>
+        <option value="raniganj">रानीगंज</option>
+        <option value="babuganj">बाबूगंज</option>
+      </select>
+    </div>
+
+    <!-- Nyay Panchayat Select -->
+    <div class="form-group">
+      <label for="nyaySelect">न्याय पंचायत:</label>
+      <select id="nyaySelect" disabled>
+        <option value="">-- पहले ब्लॉक चुनें --</option>
+      </select>
+    </div>
+
+    <!-- Village Select -->
+    <div class="form-group">
+      <label for="villageSelect">गांव:</label>
+      <select id="villageSelect" disabled>
+        <option value="">-- पहले न्याय पंचायत चुनें --</option>
+      </select>
+    </div>
+
+    <!-- Button -->
+    <div class="form-actions">
+      <button type="submit" class="filter-btn" disabled>परिवार देखें</button>
+    </div>
+  </form>
+</section>
 
   <section class="family-list">
     <p class="no-data">कृपया ऊपर दिए गए विकल्पों में से क्षेत्र का चयन करें।</p>
