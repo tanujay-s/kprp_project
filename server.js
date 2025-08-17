@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
+const routes = require('./routes/api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,8 @@ app.get('/family', (req, res) => {
 app.get('/admin/login', (req, res) => {
   res.render('admin');
 });
+
+app.use("/", routes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);
