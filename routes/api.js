@@ -49,7 +49,6 @@ router.post("/member/add", async (req, res) => {
     if (!family) {
       return res.status(404).json({ error: "Family not found" });
     }
-
     const newMember = new Member({
       familyId,
       name,
@@ -67,22 +66,55 @@ router.post("/member/add", async (req, res) => {
 });
 
 
-router.get("/family/search", async (req, res) => {
+router.get("/admin/family/search", async (req, res) => {
   try {
     const { block, village, nyayPanchayat } = req.query;
 
     let query = {};
-    // if (lineageName) query.lineageName = new RegExp(lineageName, "i");
     if (block) query.block = block;
     if (village) query.village = village;
     if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
-
     const families = await Family.find(query);
     res.json(families);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
   }
 });
+
+router.get("/family/search", async (req, res) => {
+  try {
+    console.log('Incoming GET(family/serach)');
+    const { block, village, nyayPanchayat } = req.query;
+
+    let query = {};
+    if (block) query.block = block;
+    if (village) query.village = village;
+    if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
+    
+    const families = await Family.find(query);
+
+    if (!families || families.length === 0) {
+      return res.status(404).json({ message: "No families found for given search criteria" });
+    }
+
+    const familiesWithMembers = await Promise.all(
+      families.map(async (family) => {
+        const members = await Member.find({ familyId: family._id });
+        return {
+          ...family.toObject(),
+          members: members || []
+        };
+      })
+    );
+
+    console.log('Outgoing GET(family/serach)');
+    res.json(familiesWithMembers);
+
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
 
 router.get("/family/:id/members", async (req, res) => {
   try {

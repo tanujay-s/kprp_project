@@ -1,74 +1,75 @@
-<div class="page-container">
 <%- include('shared/header') %>
+<div class="page-container">
 
 <main class="family-main" id="family-main"> 
   <h2 class="page-title">परिवार विवरण</h2>
   <p class="page-subtitle">क्षेत्र का चयन करें और संबंधित परिवारों को देखें</p>
 
-  <!-- <section class="filter-section">
-    <form>
-      <div class="dropdown-row">
-        <div class="dropdown-group">
-          <label for="blockSelect">ब्लॉक:</label>
-          <select id="blockSelect">
-            <option value="">-- ब्लॉक चुनें --</option>
-            <option value="raniganj">रानीगंज</option>
-            <option value="babuganj">बाबूगंज</option>
-          </select>
-        </div>
-
-        <div class="dropdown-group">
-          <label for="nyaySelect">न्याय पंचायत:</label>
-          <select id="nyaySelect" disabled>
-            <option value="">-- पहले ब्लॉक चुनें --</option>
-          </select>
-        </div>
-
-        <div class="dropdown-group">
-          <label for="villageSelect">गांव:</label>
-          <select id="villageSelect" disabled>
-            <option value="">-- पहले न्याय पंचायत चुनें --</option>
-          </select>
-        </div>
-      </div>
-
-      <button type="submit" class="filter-btn" disabled>परिवार देखें</button>
-    </form>
-  </section> -->
 <section class="admin-member-form-container">
 
   <form class="admin-member-form">
-    <!-- Block Select -->
+  <div class="form-group">
+    <label for="blockSelect">ब्लॉक:</label>
+    <select id="blockSelect">
+      <option value="">-- ब्लॉक चुनें --</option>
+      <option value="रानीगंज">रानीगंज</option>
+      <option value="गौरा">गौरा</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="nyaySelect">न्याय पंचायत:</label>
+    <select id="nyaySelect" disabled>
+      <option value="">-- पहले ब्लॉक चुनें --</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="villageSelect">गांव:</label>
+    <select id="villageSelect" disabled>
+      <option value="">-- पहले न्याय पंचायत चुनें --</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="filter-btn" id="filter-btn" disabled>परिवार देखें</button>
+  </div>
+</form>
+
+
+  <!-- <form class="admin-member-form">
     <div class="form-group">
       <label for="blockSelect">ब्लॉक:</label>
       <select id="blockSelect">
         <option value="">-- ब्लॉक चुनें --</option>
-        <option value="raniganj">रानीगंज</option>
-        <option value="babuganj">बाबूगंज</option>
+        <option value="रानीगंज ">रानीगंज </option>
+        <option value="गौरा">गौरा</option>
       </select>
     </div>
 
-    <!-- Nyay Panchayat Select -->
     <div class="form-group">
       <label for="nyaySelect">न्याय पंचायत:</label>
-      <select id="nyaySelect" disabled>
+      <select id="nyaySelect">
         <option value="">-- पहले ब्लॉक चुनें --</option>
+        <option value="सुल्तानपुर">सुल्तानपुर</option>
       </select>
     </div>
 
-    <!-- Village Select -->
     <div class="form-group">
       <label for="villageSelect">गांव:</label>
-      <select id="villageSelect" disabled>
+      <select id="villageSelect" >
         <option value="">-- पहले न्याय पंचायत चुनें --</option>
+        <option value="सुल्तानपुर">सुल्तानपुर</option>
       </select>
     </div>
 
-    <!-- Button -->
     <div class="form-actions">
-      <button type="submit" class="filter-btn" disabled>परिवार देखें</button>
+      <button type="submit" class="filter-btn">परिवार देखें</button>
     </div>
-  </form>
+  </form> -->
+
+   <div id="familyResults"></div>
+
 </section>
 
   <section class="family-list">
@@ -76,6 +77,6 @@
   </section>
 </main>
 
-<%- include('shared/footer') %>
-
+<script src="/js/familySearch.js"></script>
 </div>
+<%- include('shared/footer') %>
