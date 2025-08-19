@@ -1,11 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".admin-member-form");
   const blockSelect = document.getElementById("blockSelect");
-  console.log("script loaded, blockSelect =", blockSelect);
   const nyaySelect = document.getElementById("nyaySelect");
   const villageSelect = document.getElementById("villageSelect");
   const resultsDiv = document.getElementById("familyResults");
   const filterBtn = document.getElementById("filter-btn");
+  const backBtnSection = document.querySelector(".back__btn");
+  const backBtn = document.getElementById("backBtn");
+  const form_section = document.querySelector('.admin-member-form-container');
+  const familt_result_section = document.getElementById("family-results-section");
 
       const hierarchy = {
     "रानीगंज": {
@@ -77,26 +80,85 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (!res.ok) {
-        resultsDiv.innerHTML = `<p style="color:red;">${data.message || "कोई परिवार नहीं मिला"}</p>`;
+        familt_result_section.style.display = "block";
+        backBtnSection.style.display = "block"; 
+        form_section.style.display = "none";
+        document.querySelector(".family-list").style.display = "none";
+        resultsDiv.innerHTML = `<p style="color:red;">${"कोई परिवार नहीं मिला"}</p>`;
+        resultsDiv.style.textAlign = "center";
         return;
       }
 
       if (data.length === 0) {
+        familt_result_section.style.display = "block";
+        backBtnSection.style.display = "block"; 
         resultsDiv.innerHTML = "<p>कोई परिवार नहीं मिला</p>";
       } else {
+        backBtnSection.style.display = "block";
+        familt_result_section.style.display = "block"; 
+        form_section.style.display = "none";
+        document.querySelector(".family-list").style.display = "none";
         resultsDiv.innerHTML = `
-          <h3>परिवार:</h3>
-          <ul>
-            ${data.map(f => `
-              <li>
-                <strong>${f.lineageName}</strong> (${f.clan || "कुल"}), गांव: ${f.village}
-              </li>
-            `).join("")}
-          </ul>
-        `;
+            <h3 style="text-align:center">परिवार सूची:</h3>
+            <div class="table-container">
+              <table class="family-table">
+                <thead>
+                  <tr>
+                    <th>वंश</th>
+                    <th>नाम</th>
+                    <th>पिता</th>
+                    <th>क्षत्रिय</th>
+                    <th>ग्राम</th>
+                    <th>न्याय पंचायत</th>
+                    <th>विकास खंड</th>
+                    <th>पूर्व निवास</th>
+                    <th>अन्य</th>
+                    <th>वर्ष</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(f => 
+                    f.members.map(m => {
+                      let year = "-";
+                      if (m.birth) {
+                        year = new Date(m.birth).getFullYear() + ' (जन्म वर्ष)';
+                      } else if (m.death) {
+                        year = new Date(m.birth).getFullYear() + ' (मृत्यु वर्ष)';
+                      }
+                      return `
+                        <tr>
+                          <td>${f.lineageName || "-"}</td>
+                          <td>${m.name || "-"}</td>
+                          <td>${m.guardianName || "-"}</td>
+                          <td>${f.clan || "-"}</td>
+                          <td>${f.village || "-"}</td>
+                          <td>${f.nyayPanchayat || "-"}</td>
+                          <td>${f.block || "-"}</td>
+                          <td>${f.oldResidence || "-"}</td>
+                          <td>${m.otherDetails || "-"}</td>
+                          <td>${year}</td>
+                        </tr>
+                      `;
+                    }).join("")
+                  ).join("")}
+                </tbody>
+              </table>
+            </div>
+          `;
       }
     } catch (err) {
       resultsDiv.innerHTML = "<p style='color:red;'>सर्वर त्रुटि</p>";
     }
   });
+
+  backBtn.addEventListener("click", () => {
+    familt_result_section.style.display = "none";
+    backBtnSection.style.display = "none";
+    form_section.style.display = "block";
+    form.reset();
+    document.getElementById("nyaySelect").disabled = true;
+    document.getElementById("villageSelect").disabled = true;
+    document.getElementById("filter-btn").disabled = true;
+  });
+
 });
