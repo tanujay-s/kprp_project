@@ -65,22 +65,6 @@ router.post("/member/add", async (req, res) => {
   }
 });
 
-
-router.get("/admin/family/search", async (req, res) => {
-  try {
-    const { block, village, nyayPanchayat } = req.query;
-
-    let query = {};
-    if (block) query.block = block;
-    if (village) query.village = village;
-    if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
-    const families = await Family.find(query);
-    res.json(families);
-  } catch (err) {
-    res.status(500).json({ error: "Server error", details: err.message });
-  }
-});
-
 router.get("/family/search", async (req, res) => {
   try {
     console.log('Incoming GET(family/serach)');

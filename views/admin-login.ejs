@@ -2,9 +2,12 @@
 
 <main class="admin-login">
   <h2>Admin Login</h2>
+    <% if (typeof error !== 'undefined') { %>
+      <p style="color:red; margin-bottom: 10px; text-align: center;"><%= error %></p>
+    <% } %>
   <form action="/admin/login" method="POST">
-    <label for="email">Email:</label>
-    <input type="email" name="email" required>
+    <label for="username">Username:</label>
+    <input type="text" name="username" required>
 
     <label for="password">Password:</label>
     <input type="password" name="password" required>
