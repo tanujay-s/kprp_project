@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 require ('dotenv').config();
+const Family = require('../models/family');
 
 function requireAdmin(req, res, next) {
   if (req.session.isAdmin) {
@@ -35,8 +36,18 @@ router.get('/login', (req, res) => {
   res.render('admin-login');
 });
 
-router.get("/dashboard", requireAdmin, (req, res) => {
-  res.render("admin");
+router.get('/add-member', (req, res) => {
+  res.render('addMember');
+});
+
+router.get("/dashboard", requireAdmin, async (req, res) => {
+  try {
+    const families = await Family.find();
+    res.render("admin", { families }); 
+  } catch (err) {
+    console.error("Error fetching families:", err);
+    res.status(500).send("Error loading families");
+  }
 });
 
 router.get("/family/search", async (req, res) => {
@@ -51,6 +62,25 @@ router.get("/family/search", async (req, res) => {
     res.json(families);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+router.get("/search-family", async (req, res) => {
+  try {
+    const q = req.query.q;
+    if (!q) return res.json([]);
+
+    const families = await Family.find({
+      $or: [
+        { lineageName: { $regex: q, $options: "i" } },
+        { village: { $regex: q, $options: "i" } }
+      ]
+    }).limit(10);
+
+    res.json(families);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

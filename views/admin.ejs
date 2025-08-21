@@ -1,50 +1,159 @@
 <%- include('shared/header') %>
+<style>
 
-<main class="admin-member-form-container">
-  <h2 class="form-title">Add Members</h2>
-  <form action="/admin/add-member" method="POST" class="admin-member-form">
-    <div class="form-group">
-      <label for="blockSelect">ब्लॉक:</label>
-      <select name="block" id="blockSelect" required>
-        <option value="">-- ब्लॉक चुनें --</option>
-        <option value="raniganj">रानीगंज</option>
-        <option value="babuganj">बाबूगंज</option>
-      </select>
-    </div>
+.family-list {
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 2rem auto;
+}
 
-    <div class="form-group">
-      <label for="nyaySelect">न्याय पंचायत:</label>
-      <select name="nyay" id="nyaySelect" required>
-        <option value="">-- पहले ब्लॉक चुनें --</option>
-      </select>
-    </div>
+.family-list h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #222;
+  text-align: center;
+}
 
-    <div class="form-group">
-      <label for="villageSelect">गांव:</label>
-      <select name="village" id="villageSelect" required>
-        <option value="">-- पहले न्याय पंचायत चुनें --</option>
-      </select>
-    </div>
+.family-list table {
+  width: 100%;
+  max-height: 500px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 0.75rem;
+  overflow: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
 
-    <div class="form-group">
-      <label for="memberName">सदस्य का नाम:</label>
-      <input type="text" name="memberName" id="memberName" required>
-    </div>
+.family-list th, 
+.family-list td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #eee;
+}
 
-    <div class="form-group">
-      <label for="relation">रिश्ता:</label>
-      <input type="text" name="relation" id="relation" required>
-    </div>
+.family-list th {
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
 
-    <div class="form-group">
-      <label for="familyDetails">परिवार की जानकारी:</label>
-      <textarea name="familyDetails" id="familyDetails" rows="4" required></textarea>
-    </div>
+.family-list tr:nth-child(even) {
+  background: #f3f4f6;
+}
 
-    <div class="form-actions">
-      <button type="submit">Add</button>
-    </div>
-  </form>
+.family-list tr:hover {
+  background: #e0e7ff;
+  transition: background 0.2s ease-in-out;
+}
+
+/* Responsive Table for Mobile */
+@media (max-width: 768px) {
+  .family-list table, 
+  .family-list thead, 
+  .family-list tbody, 
+  .family-list th, 
+  .family-list td, 
+  .family-list tr {
+    display: block;
+    width: 100%;
+  }
+
+  .family-list thead {
+    display: none;
+  }
+
+  .family-list tr {
+    margin-bottom: 1rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 0.75rem;
+  }
+
+  .family-list td {
+    border: none;
+    padding: 0.5rem 0.75rem;
+    position: relative;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+  }
+
+  .family-list td:last-child {
+    border-bottom: none;
+  }
+
+  .family-list td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #374151;
+    flex: 1;
+    text-align: left;
+  }
+
+  .family-list td span {
+    flex: 2;
+    text-align: right;
+    color: #111827;
+  }
+}
+</style>
+<main class="admin-dashboard">
+  <h2 style="text-align: center;background: linear-gradient(90deg, hsla(221, 59%, 75%, 1) 0%, hsla(216, 40%, 58%, 1) 100%); border-radius: 10px;">Admin Dashboard</h2>
+
+  
+  <section class="family-list">
+    <!-- <h3>All Listed Families</h3> -->
+    <% if (families.length === 0) { %>
+      <p>No families added yet.</p>
+    <% } else { %>
+      <table border="1" cellpadding="8">
+        <thead>
+          <tr>
+           <th>वंश</th>
+           <th>क्षत्रिय</th>
+           <th>ग्राम</th>
+           <th>न्याय पंचायत</th>
+           <th>विकास खंड</th>
+           <th>पूर्व निवास</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% families.forEach(family=> { %>
+            <tr>
+              <td data-label="वंश"><span>
+                  <%= family.lineageName %>
+                </span></td>
+              <td data-label="क्षत्रिय"><span>
+                <%= family.clan %>
+              </span></td>
+              <td data-label="ग्राम"><span>
+                  <%= family.village %>
+                </span></td>
+                <td data-label="न्याय पंचायत"><span>
+                  <%= family.nyayPanchayat %>
+                </span></td>
+                <td data-label="विकास खंड"><span>
+                  <%= family.block %>
+                </span></td>
+                <td data-label="पूर्व निवास"><span>
+                  <%= family.oldResidence %>
+                </span></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% } %>
+        </section>
+        <a href="/admin/add-member" class="style-btn">Add New Family / Member</a>
 </main>
 
 

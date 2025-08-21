@@ -1,0 +1,151 @@
+<%- include('shared/header') %>
+
+<main class="admin-member-form-container">
+    <h2 class="form-title">Add Family / Member</h2>
+
+    <div class="form-group">
+        <label><input type="radio" name="mode" value="family" checked> नया परिवार जोड़ें</label>
+        <label><input type="radio" name="mode" value="member"> मौजूदा परिवार में सदस्य जोड़ें</label>
+    </div>
+
+    <div class="admin-member-form">
+        <div>
+            <div id="family-fields">
+                <div class="form-group">
+                    <label for="lineageName">वंश का नाम:</label>
+                    <input type="text" name="lineageName" id="lineageName">
+                </div>
+    
+                <div class="form-group">
+                    <label for="clan">कुल:</label>
+                    <input type="text" name="clan" id="clan">
+                </div>
+    
+                <div class="form-group">
+                    <label for="blockSelect">ब्लॉक:</label>
+                    <select name="block" id="blockSelect">
+                        <option value="">-- ब्लॉक चुनें --</option>
+                        <option value="raniganj">रानीगंज</option>
+                        <option value="babuganj">बाबूगंज</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="nyaySelect">न्याय पंचायत:</label>
+                    <select name="nyay" id="nyaySelect">
+                        <option value="">-- पहले ब्लॉक चुनें --</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="villageSelect">गांव:</label>
+                    <select name="village" id="villageSelect">
+                        <option value="">-- पहले न्याय पंचायत चुनें --</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="oldResidence">पूर्व निवास:</label>
+                    <input type="text" name="oldResidence" id="oldResidence">
+                </div>
+                <div class="form-actions">
+                    <button class="">Add Family</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div id="member-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="familySearch">परिवार खोजें:</label>
+                    <input type="text" id="familySearch" placeholder="वंश/ग्राम से खोजें...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+    
+                <input type="hidden" name="family_id" id="selectedFamilyId">
+    
+                <div class="form-group">
+                    <label for="memberName">सदस्य का नाम:</label>
+                    <input type="text" name="memberName" id="memberName">
+                </div>
+    
+                <div class="form-group">
+                    <label for="relation">रिश्ता:</label>
+                    <input type="text" name="relation" id="relation">
+                </div>
+                <div class="form-actions">
+                    <button class="">Add Member</button>
+                </div>
+            </div>
+        </div>
+        <a href="/admin/dashboard" class="style-btn" style="display: inline; margin-left: 10px;">Dashboard</a>
+    </div>
+</main>
+
+<script>
+  const familyFields = document.getElementById("family-fields");
+  const memberFields = document.getElementById("member-fields");
+
+  document.querySelectorAll("input[name='mode']").forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (radio.value === "family") {
+        familyFields.style.display = "block";
+        memberFields.style.display = "none";
+      } else {
+        familyFields.style.display = "none";
+        memberFields.style.display = "block";
+      }
+    });
+  });
+
+  const familySearch = document.getElementById("familySearch");
+  const searchResults = document.getElementById("searchResults");
+  const selectedFamilyId = document.getElementById("selectedFamilyId");
+
+  familySearch?.addEventListener("input", async () => {
+    const query = familySearch.value.trim();
+    if (query.length < 2) {
+      searchResults.innerHTML = "";
+      return;
+    }
+
+    const res = await fetch(`/admin/search-family?q=${query}`);
+    const families = await res.json();
+
+    searchResults.innerHTML = families.map(fam => `
+      <div class="search-item" data-id="${fam._id}">
+        <strong>${fam.lineageName}</strong> (${fam.village})
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".search-item").forEach(item => {
+      item.addEventListener("click", () => {
+        selectedFamilyId.value = item.dataset.id;
+        familySearch.value = item.innerText;
+        searchResults.innerHTML = "";
+      });
+    });
+  });
+</script>
+
+<style>
+  .search-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    margin-top: 4px;
+    border-radius: 5px;
+  }
+
+  .search-item {
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .search-item:hover {
+    background: #f0f0f0;
+  }
+</style>
+
+
+<%- include('shared/footer') %>

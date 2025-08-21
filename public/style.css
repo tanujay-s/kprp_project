@@ -234,7 +234,6 @@ img {
 }
 
 .admin-dashboard{
-  max-width: 400px;
   margin: auto;
   padding: 2rem;
   background-color: #fff;
@@ -353,7 +352,7 @@ img {
   background-color: #37363b;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.75rem;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -381,10 +380,10 @@ img {
 
 .familyResults {
   height: 100%;
-  width: 100%;         /* or set a fixed width like 90% */
-  max-width: 1200px;   /* keeps table readable on big screens */
-  max-height: 500px;       /* adjust as needed */
-  overflow: auto;      /* enables scroll */
+  width: 100%;         
+  max-width: 1200px; 
+  max-height: 500px;    
+  overflow: auto;    
   margin: 1rem auto;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -480,4 +479,39 @@ img {
 
 .back__btn button:hover {
   background: #2b2a2e;
+}
+
+.style-btn {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  background: #4f46e5; 
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  transition: all 0.25s ease-in-out;
+  margin: 1rem auto;
+  max-width: 260px;
+}
+
+.style-btn:hover {
+  background: #4338ca;
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.45);
+  transform: translateY(-2px);
+}
+.style-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+}
+@media (max-width: 768px) {
+  .style-btn {
+    width: 90%;
+    font-size: 0.95rem;
+    padding: 0.65rem 1rem;
+  }
 }
