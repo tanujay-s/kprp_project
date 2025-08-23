@@ -33,11 +33,8 @@ function adjustFooter() {
     return;
   }
 
-  // Get total content height *excluding* the margin we're going to set
   const contentHeight = main.offsetTop + main.offsetHeight;
   const viewportHeight = window.innerHeight;
-
-  console.log({ contentHeight, viewportHeight });
 
   if (contentHeight + footer.offsetHeight < viewportHeight) {
     const extraSpace = viewportHeight - (contentHeight + footer.offsetHeight);

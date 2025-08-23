@@ -24,14 +24,30 @@ app.use(session({
   cookie: { secure: false } // change to true if using HTTPS
 }));
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(()=>{
-  console.log("----Database Connected----");
-}).catch((err)=>{
-  console.error("Mongodb connection error: ",err);
-})
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// }).then(()=>{
+//   console.log("----Database Connected----");
+// }).catch((err)=>{
+//   console.error("Mongodb connection error: ",err);
+// })
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 30000, 
+      retryWrites: true,
+      w: "majority"
+    });
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 app.use((req, res, next) => {
   res.locals.isAdmin = req.session.isAdmin || false;
@@ -39,10 +55,10 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', { activePage: "home" });
 });
 app.get('/family', (req, res) => {
-  res.render('family'); 
+  res.render('family', {activePage: ""}); 
 });
 
 app.use("/", user_routes);

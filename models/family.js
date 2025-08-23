@@ -8,8 +8,7 @@ const familySchema = new mongoose.Schema({
     nyayPanchayat: {type: String, required: false},
     block: {type: String, required: true},
     oldResidence: {type: String, required: false},
-    createdAt: {type: Date, default: Date.now}
-});
+}, { timestamps: true });
 
 
 familySchema.index({block: 1, nyayPanchayat: 1, village: 1, lineageName: 1});

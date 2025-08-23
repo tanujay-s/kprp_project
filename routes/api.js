@@ -14,7 +14,6 @@ router.post("/family/add", async (req, res) => {
       oldResidence,
       headMember, // optional
     } = req.body;
-    
     const newFamily = new Family({
       lineageName,
       clan,
@@ -67,7 +66,6 @@ router.post("/member/add", async (req, res) => {
 
 router.get("/family/search", async (req, res) => {
   try {
-    console.log('Incoming GET(family/serach)');
     const { block, village, nyayPanchayat } = req.query;
 
     let query = {};
@@ -75,7 +73,7 @@ router.get("/family/search", async (req, res) => {
     if (village) query.village = village;
     if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
     
-    const families = await Family.find(query);
+    const families = await Family.find(query).sort({ createdAt: 1 });
 
     if (!families || families.length === 0) {
       return res.status(404).json({ message: "No families found for given search criteria" });
@@ -83,15 +81,13 @@ router.get("/family/search", async (req, res) => {
 
     const familiesWithMembers = await Promise.all(
       families.map(async (family) => {
-        const members = await Member.find({ familyId: family._id });
+        const members = await Member.find({ familyId: family._id }).sort({ createdAt: 1 });;
         return {
           ...family.toObject(),
           members: members || []
         };
       })
     );
-
-    console.log('Outgoing GET(family/serach)');
     res.json(familiesWithMembers);
 
   } catch (err) {

@@ -7,7 +7,6 @@ const memberSchema = new mongoose.Schema({
     yearType: { type: String, enum: ["birth", "death"] },
     year: { type: Number },
     otherDetails: { type: String },
-    createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Member", memberSchema);

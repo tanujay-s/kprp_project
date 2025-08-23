@@ -293,7 +293,7 @@ img {
 .admin-member-form-container {
   max-width: 700px;
   margin: 2rem auto;
-  padding: 1rem;
+  padding: 1.5rem;
   background-color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -448,15 +448,65 @@ img {
   font-size: 18px;
 }
 
+.family-meta {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  background: #f9f9f9;
+  border-left: 4px solid #f2bc6c;
+  border-right: 4px solid #f2bc6c;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 6px auto 12px auto;
+  max-width: 90%;
+  line-height: 1.5;
+  font-style: italic;
+}
+
 @media (max-width: 600px) {
   .family-table {
-    font-size: 12px;
-    min-width: 600px;
+    display: none;
   }
 
-  .family-table th,
-  .family-table td {
-    padding: 6px 8px;
+  .family-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    max-height: 500px; 
+    overflow-y: auto;   
+  }
+
+  .family-card h4 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #37363b;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+  }
+
+  .member-item {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-bottom: 1px solid #f1f1f1;
+  }
+
+  .member-item:last-child {
+    border-bottom: none;
+  }
+
+  .member-item strong {
+    display: block;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .member-item span {
+    font-size: 14px;
+    color: #000;
   }
 }
 
@@ -514,4 +564,37 @@ img {
     font-size: 0.95rem;
     padding: 0.65rem 1rem;
   }
+}
+
+ul li a {
+  text-decoration: none;
+  color: #333;
+  padding: 5px 12px;
+  display: inline-block;
+  transition: 0.3s;
+}
+
+ul li a:hover {
+  background: #f0f0f0;
+  color: #222;
+}
+
+ul li a.active {
+  font-weight: bold;
+  color: #fff;
+  background: #007bff;
+  border-radius: 4px;
+}
+
+.logout_btn{
+  background:none;
+  border:none;
+  color:inherit;
+  cursor:pointer;
+  padding: 5px 12px;
+}
+
+.logout_btn:hover{
+  background: #f0f0f0;
+  color: #222;
 }

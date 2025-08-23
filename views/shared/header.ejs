@@ -19,15 +19,18 @@
       <ul>
         <% if (isAdmin) { %>
           <li>
+            <a href="/admin/dashboard"  class="<%= (activePage === 'dashboard') ? 'active' : '' %>">Admin Dashboard</a>
+          </li>
+          <li>
             <form action="/admin/logout" method="POST" style="display:inline;">
-              <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;">
+              <button type="submit" class="logout_btn">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout Admin
               </button>
             </form>
           </li>
           <% } else { %>
-            <li><a href="/"><i class="fa-solid fa-house"></i> Home</a></li>
-            <li><a href="/admin/login"><i class="fa-solid fa-user"></i> Admin</a></li>
+            <li><a href="/" class="<%= (activePage === 'home') ? 'active' : '' %>"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="/admin/login" class="<%= (activePage === 'adminLogin') ? 'active' : '' %>"><i class="fa-solid fa-user"></i> Admin</a></li>
             <% } %>
       </ul>
     </nav>

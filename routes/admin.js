@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 require ('dotenv').config();
 const Family = require('../models/family');
+const Member = require('../models/member');
 
 function requireAdmin(req, res, next) {
   if (req.session.isAdmin) {
@@ -28,22 +29,22 @@ router.post("/login", (req, res) => {
     req.session.isAdmin = true;
     res.redirect("/admin/dashboard");
   } else {
-    res.render("admin-login", { error: "गलत यूज़रनेम या पासवर्ड" });
+    res.render("admin-login", { error: "गलत यूज़रनेम या पासवर्ड", activePage: "adminLogin" });
   }
 });
 
 router.get('/login', (req, res) => {
-  res.render('admin-login');
+  res.render('admin-login',  { activePage: "adminLogin" });
 });
 
-router.get('/add-member', (req, res) => {
-  res.render('addMember');
+router.get('/add-member', requireAdmin, (req, res) => {
+  res.render('addMember', { activePage: "" });
 });
 
 router.get("/dashboard", requireAdmin, async (req, res) => {
   try {
-    const families = await Family.find();
-    res.render("admin", { families }); 
+    const families = await Family.find().sort({ createdAt: 1 });
+    res.render("admin", { families, activePage: "dashboard" }); 
   } catch (err) {
     console.error("Error fetching families:", err);
     res.status(500).send("Error loading families");
@@ -58,7 +59,7 @@ router.get("/family/search", async (req, res) => {
     if (block) query.block = block;
     if (village) query.village = village;
     if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
-    const families = await Family.find(query);
+    const families = await Family.find(query).sort({ createdAt: 1 });
     res.json(families);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
@@ -81,6 +82,23 @@ router.get("/search-family", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.delete("/cleanup", async (req, res) => {
+  try {
+    console.log(`
+    --------------------------------------
+    '              Cleaning              '
+    '                UP                  '
+    '             Database               '
+    --------------------------------------  
+    `);
+    await Family.deleteMany({});
+    await Member.deleteMany({});
+    res.json({ message: "All families and members deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
