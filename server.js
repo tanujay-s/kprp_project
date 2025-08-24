@@ -21,7 +21,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // change to true if using HTTPS
+  // cookie: { secure: false }
+  cookie: { 
+    secure: process.env.NODE_ENV === "production", 
+    httpOnly: true,     
+    sameSite: "lax" 
+  } 
 }));
 
 // mongoose.connect(process.env.MONGODB_URI, {
