@@ -261,13 +261,12 @@
     addMemberBtn.addEventListener("click", async () =>{
       try{
         const memberData = {
-          family_id: document.getElementById("selectedFamilyId").value,
-          memberName: document.getElementById("memberName").value,
+          familyId: document.getElementById("selectedFamilyId").value,
+          name: document.getElementById("memberName").value,
           guardianName: document.getElementById("guardianName").value,
           otherDetails: document.getElementById("otherDetails").value,
         };
-
-        if (year) {
+        if (memberData.year) {
           memberData.year = year;
           memberData.yearType = yearType;
         }

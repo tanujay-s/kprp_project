@@ -14,6 +14,7 @@ router.post("/family/add", async (req, res) => {
       oldResidence,
       headMember, // optional
     } = req.body;
+
     const newFamily = new Family({
       lineageName,
       clan,
@@ -75,7 +76,7 @@ router.get("/family/search", async (req, res) => {
     
     const families = await Family.find(query).sort({ createdAt: 1 });
 
-    if (!families || families.length === 0) {
+    if (!families) {
       return res.status(404).json({ message: "No families found for given search criteria" });
     }
 

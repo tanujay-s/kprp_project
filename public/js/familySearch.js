@@ -76,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch(`/family/search?block=${block}&nyayPanchayat=${nyayPanchayat}&village=${village}`);
       const data = await res.json();
       data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
       if (!res.ok) {
         familt_result_section.style.display = "block";
         backBtnSection.style.display = "block"; 
@@ -90,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.length === 0) {
         familt_result_section.style.display = "block";
         backBtnSection.style.display = "block"; 
-        resultsDiv.innerHTML = "<p>कोई परिवार नहीं मिला</p>";
+        resultsDiv.innerHTML = "<p style='color: red;'>कोई परिवार नहीं मिला</p>";
+        resultsDiv.style.textAlign = "center";
       } else {
         backBtnSection.style.display = "block";
         familt_result_section.style.display = "block"; 
@@ -185,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <th>पिता का नाम</th>
                         <th>अन्य</th>
                         <th>जन्म/मृत्यु वर्ष</th>
-                        <th>जोड़ा गया</th>
                       </tr>
                     </thead>
                     <tbody>

@@ -66,15 +66,21 @@ router.get("/family/search", async (req, res) => {
   }
 });
 
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 router.get("/search-family", async (req, res) => {
   try {
     const q = req.query.q;
     if (!q) return res.json([]);
 
+    const safeQ = escapeRegex(q);
+
     const families = await Family.find({
       $or: [
-        { lineageName: { $regex: q, $options: "i" } },
-        { village: { $regex: q, $options: "i" } }
+        { lineageName: { $regex: safeQ, $options: "i" } },
+        { village: { $regex: safeQ, $options: "i" } }
       ]
     }).limit(10);
 
