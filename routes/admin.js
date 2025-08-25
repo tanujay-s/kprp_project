@@ -41,10 +41,10 @@ router.get('/add-member', requireAdmin, (req, res) => {
   res.render('addMember', { activePage: "" });
 });
 
-router.get("/dashboard", requireAdmin, async (req, res) => {
+router.get("/dashboard",  async (req, res) => {
   try {
     const families = await Family.find().sort({ createdAt: 1 });
-    res.render("admin", { families, activePage: "dashboard" }); 
+    res.render("dashboard", { families, activePage: "dashboard" }); 
   } catch (err) {
     console.error("Error fetching families:", err);
     res.status(500).send("Error loading families");

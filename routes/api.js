@@ -100,9 +100,13 @@ router.get("/family/search", async (req, res) => {
 router.get("/family/:id/members", async (req, res) => {
   try {
     const { id } = req.params;
-
+    const family = await Family.findById(req.params.id);
+    if (!family) {
+      return res.status(404).send("Family not found");
+    }
     const members = await Member.find({ familyId: id });
-    res.json(members);
+    res.render("family-member", {activePage: "", family, members });
+    // res.json(members);
   } catch (err) {
     res.status(500).json({ error: "Server error", details: err.message });
   }

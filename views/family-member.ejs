@@ -1,0 +1,194 @@
+<%- include('shared/header') %>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f9f9fc;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .family-details,
+    .family-members {
+        background: #fff;
+        padding: 20px;
+        margin-bottom: 25px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .header h2 {
+        margin: 0;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .description {
+        margin: 10px 0;
+        color: #444;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th,
+    td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background: #f1f1f1;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .btn.edit {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn.delete {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn.add {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn.small {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    form {
+        display: inline;
+    }
+</style>
+
+<div class="container">
+
+    <section class="family-details">
+        <div class="header">
+            <h2>Family Details</h2>
+            <a href="/families/<%= family._id %>/edit" class="btn edit">Edit Family</a>
+        </div>
+        <div class="details-grid">
+            <p><strong>Clan Name:</strong>
+                <%= family.lineageName %>
+            </p>
+            <p><strong>Family ID:</strong>
+                <%= family._id %>
+            </p>
+            <p><strong>Date Created:</strong>
+                <%= family.createdAt.toDateString() %>
+            </p>
+            <p><strong>Number of Members:</strong>
+                <%= members.length %>
+            </p>
+            <p><strong>Village:</strong>
+                <%= family.village %>
+            </p>
+            <p><strong>Nyay Panchayat:</strong>
+                <%= family.nyayPanchayat %>
+            </p>
+            <p><strong>Block:</strong>
+                <%= family.block %>
+            </p>
+            <p><strong>Old Residence:</strong>
+                <%= family.oldResidence %>
+            </p>
+        </div>
+        <p class="description">
+            <%= family.description || "No description provided." %>
+        </p>
+        <form action="/families/<%= family._id %>?_method=DELETE" method="POST">
+            <button type="submit" class="btn delete">Delete Family</button>
+        </form>
+    </section>
+
+    <section class="family-members">
+        <div class="header">
+            <h2>Family Members</h2>
+            <a href="/families/<%= family._id %>/members/add" class="btn add">Add Member</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Father's Name</th>
+                    <th>Others</th>
+                    <th>Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (members.length===0) { %>
+                    <tr>
+                        <td colspan="5" style="text-align:center;">No members found</td>
+                    </tr>
+                    <% } else { %>
+                        <% members.forEach(member=> { %>
+                            <tr>
+                                <td>
+                                    <%= member.name %>
+                                </td>
+                                <td>
+                                    <%= member.guardianName %>
+                                </td>
+                                <td>
+                                    <%= member.otherDetails %>
+                                </td>
+                                <% if (member.year) { %>
+                                    <td>
+                                        <%= member.year %>
+                                    </td>
+                                    <td>
+                                        <%= member.yearType %>
+                                    </td>
+                                    <% } %>
+                                <td>
+                                    <a href="/members/<%= member._id %>/edit" class="btn small edit">Edit</a>
+                                    <form action="/members/<%= member._id %>?_method=DELETE" method="POST"
+                                        style="display:inline;">
+                                        <button type="submit" class="btn small delete">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } %>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<%- include('shared/footer') %>
