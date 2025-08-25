@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const hierarchy = {
     "गौरा": {
-      "सुल्तानपुर": ["सुल्तानपुर", "सुल्तानपुर कठार", "रिशालगढ़", "टिकैता", "अतरी", "जाजपुर", "बिरई पुर", "रामनगर", "दमदम", "घीनापुर", "बोर्रा", "सुल्तानपुर", "सुल्तानपुर कठार", "रिशालगढ़"]
+      "सुल्तानपुर": ["सुल्तानपुर", "सुल्तानपुर कठार", "रिशालगढ़", "टिकैता", "अतरी", "जाजपुर", "बिरई पुर", "रामनगर", "दमदम", "घीनापुर", "बोर्रा"]
     }
   };
 
@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const isMobile = window.innerWidth <= 600;
       const res = await fetch(`/family/search?block=${block}&nyayPanchayat=${nyayPanchayat}&village=${village}`);
       const data = await res.json();
-      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       if (!res.ok) {
         familt_result_section.style.display = "block";
         backBtnSection.style.display = "block"; 
@@ -97,9 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form_section.style.display = "none";
         document.querySelector(".family-list").style.display = "none";
         resultsDiv.innerHTML = data.map(family => {
-            const members = [...family.members].sort(
-              (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-            );
+            const members = [...family.members];
 
             if (isMobile) {
               if (members.length === 0) {
@@ -195,75 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
               `;
             }
           }).join("");        
-      
-        // resultsDiv.innerHTML = `
-        //   <h3 style="text-align:center">परिवार सूची:</h3>
-        //   <div class="table-container">
-        //     <table class="family-table">
-        //       <thead>
-        //         <tr>
-        //           <th>वंश</th>
-        //           <th>नाम</th>
-        //           <th>पिता</th>
-        //           <th>क्षत्रिय</th>
-        //           <th>ग्राम</th>
-        //           <th>न्याय पंचायत</th>
-        //           <th>विकास खंड</th>
-        //           <th>पूर्व निवास</th>
-        //           <th>अन्य</th>
-        //           <th>वर्ष</th>
-        //         </tr>
-        //       </thead>
-        //       <tbody>
-        //         ${data.map(f => {
-        //           let familyHeader = `
-        //             <tr class="family-heading">
-        //               <td colspan="10" style="text-align:center; font-weight:bold; background:#f0f0f0;">
-        //                 वंश: ${f.lineageName || "-"}
-        //               </td>
-        //             </tr>
-        //           `;
-
-        //           if (!f.members || f.members.length === 0) {
-        //             return familyHeader + `
-        //               <tr>
-        //                 <td colspan="10" style="text-align:center;">कोई सदस्य नहीं</td>
-        //               </tr>
-        //             `;
-        //           }
-
-        //           return familyHeader + f.members.map(m => {
-        //             let year = "-";
-        //             if (m.birth) {
-        //               year = new Date(m.birth).getFullYear() + " (जन्म वर्ष)";
-        //             } else if (m.death) {
-        //               year = new Date(m.death).getFullYear() + " (मृत्यु वर्ष)";
-        //             }
-
-        //             return `
-        //               <tr>
-        //                 <td>${f.lineageName || "-"}</td>
-        //                 <td>${m.name || "-"}</td>
-        //                 <td>${m.guardianName || "-"}</td>
-        //                 <td>${f.clan || "-"}</td>
-        //                 <td>${f.village || "-"}</td>
-        //                 <td>${f.nyayPanchayat || "-"}</td>
-        //                 <td>${f.block || "-"}</td>
-        //                 <td>${f.oldResidence || "-"}</td>
-        //                 <td>${m.otherDetails || "-"}</td>
-        //                 <td>${year}</td>
-        //               </tr>
-        //             `;
-        //           }).join("");
-        //         }).join("")}
-        //       </tbody>
-        //     </table>
-        //   </div>
-        // `;
        
       }
     } catch (err) {
-      resultsDiv.innerHTML = "<p style='color:red;'>सर्वर त्रुटि</p>";
+      resultsDiv.innerHTML = "<p style='color:red; text-align:center;'>सर्वर त्रुटि</p>";
     }
   });
 

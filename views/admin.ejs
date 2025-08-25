@@ -110,49 +110,48 @@
   <h2 style="text-align: center;background: linear-gradient(90deg, hsla(221, 59%, 75%, 1) 0%, hsla(216, 40%, 58%, 1) 100%); border-radius: 10px;">All Family List</h2>
 
   <section class="family-list">
-    <!-- <h3>All Listed Families</h3> -->
-    <% if (families.length === 0) { %>
+  <% if (families.length === 0) { %>
       <p style="color: red;">No families added yet.</p>
-    <% } else { %>
-      <table border="1" cellpadding="8">
-        <thead>
-          <tr>
-           <th>वंश</th>
-           <th>क्षत्रिय</th>
-           <th>ग्राम</th>
-           <th>न्याय पंचायत</th>
-           <th>विकास खंड</th>
-           <th>पूर्व निवास</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% families.forEach(family=> { %>
+      <% } else { %>
+        <table border="1" cellpadding="8">
+          <thead>
             <tr>
-              <td data-label="वंश"><span>
-                  <%= family.lineageName %>
-                </span></td>
-              <td data-label="क्षत्रिय"><span>
-                <%= family.clan %>
-              </span></td>
-              <td data-label="ग्राम"><span>
-                  <%= family.village %>
-                </span></td>
+              <th>वंश</th>
+              <th>क्षत्रिय</th>
+              <th>ग्राम</th>
+              <th>न्याय पंचायत</th>
+              <th>विकास खंड</th>
+              <th>पूर्व निवास</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% families.forEach(family=> { %>
+              <tr>
+                <td data-label="वंश"><span>
+                    <%= family.lineageName %>
+                  </span></td>
+                <td data-label="क्षत्रिय"><span>
+                    <%= family.clan %>
+                  </span></td>
+                <td data-label="ग्राम"><span>
+                    <%= family.village %>
+                  </span></td>
                 <td data-label="न्याय पंचायत"><span>
-                  <%= family.nyayPanchayat %>
-                </span></td>
+                    <%= family.nyayPanchayat %>
+                  </span></td>
                 <td data-label="विकास खंड"><span>
-                  <%= family.block %>
-                </span></td>
+                    <%= family.block %>
+                  </span></td>
                 <td data-label="पूर्व निवास"><span>
-                  <%= family.oldResidence %>
-                </span></td>
+                    <%= family.oldResidence %>
+                  </span></td>
               </tr>
               <% }) %>
-            </tbody>
-          </table>
-          <% } %>
-        </section>
-        <a href="/admin/add-member" class="style-btn">Add New Family / Member</a>
+          </tbody>
+        </table>
+        <% } %>
+  </section>
+  <a href="/admin/add-member" class="style-btn">Add New Family / Member</a>
 </main>
 
 
