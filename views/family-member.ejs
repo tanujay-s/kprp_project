@@ -1,5 +1,4 @@
 <%- include('shared/header') %>
-
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -94,6 +93,128 @@
     form {
         display: inline;
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-dialog {
+        background: #fff;
+        border-radius: 12px;
+        width: 95%;
+        max-width: 450px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 15px;
+    }
+
+    .modal-header .back {
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .modal-body label {
+        display: block;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    .modal-body input,
+    .modal-body textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #f5f6fa;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn.cancel {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn.save {
+        background: #007bff;
+        border: none;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .year-type-select{
+        width: 100%;
+        height: 30px;
+        text-align: center;
+    }
+
+    @media (max-width: 480px) {
+        .modal-dialog {
+            width: 90%;
+            max-width: 100%;
+            max-height: 520px;
+            height: 100%;
+            margin: 0;
+            border-radius: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding-top: 10px;
+            padding-bottom: 5px;
+            margin-top: auto;
+        }
+
+        .modal-body input,
+        .modal-body textarea {
+            font-size: 16px;
+        }
+
+        .btn.cancel,
+        .btn.save {
+            flex: 1;
+            text-align: center;
+        }
+    }
 </style>
 
 <div class="container">
@@ -101,7 +222,7 @@
     <section class="family-details">
         <div class="header">
             <h2>Family Details</h2>
-            <a href="/families/<%= family._id %>/edit" class="btn edit">Edit Family</a>
+            <a class="btn edit" id="openFamilyEdit">Edit Family</a>
         </div>
         <div class="details-grid">
             <p><strong>Clan Name:</strong>
@@ -140,7 +261,7 @@
     <section class="family-members">
         <div class="header">
             <h2>Family Members</h2>
-            <a href="/families/<%= family._id %>/members/add" class="btn add">Add Member</a>
+            <a class="btn add" id="openMemberAddModal">Add Member</a>
         </div>
         <table>
             <thead>
@@ -149,6 +270,7 @@
                     <th>Father's Name</th>
                     <th>Others</th>
                     <th>Year</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -175,9 +297,17 @@
                                     <td>
                                         <%= member.yearType %>
                                     </td>
-                                    <% } %>
+                                <% }  else {%>
+                                        <td>-</td>
+                                    <%} %>
                                 <td>
-                                    <a href="/members/<%= member._id %>/edit" class="btn small edit">Edit</a>
+                                    <a class="btn small edit openMemberEdit"  
+                                        data-id="<%= member._id %>" 
+                                        data-name="<%= member.name %>"
+                                        data-guardian="<%= member.guardianName %>" 
+                                        data-other="<%= member.otherDetails %>" 
+                                        data-year="<%= member.year %>"
+                                        data-yeartype="<%= member.yearType %>">Edit</a>
                                     <form action="/members/<%= member._id %>?_method=DELETE" method="POST"
                                         style="display:inline;">
                                         <button type="submit" class="btn small delete">Delete</button>
@@ -189,6 +319,145 @@
             </tbody>
         </table>
     </section>
+   
 </div>
+
+<div id="familyEditModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>Edit Family</h3>
+        </div>
+        <form action="/families/<%= family._id %>?_method=PUT" method="POST" class="modal-body">
+            <label>Name of Clan</label>
+            <input type="text" name="lineageName" value="<%= family.lineageName %>" required>
+
+            <label>Village</label>
+            <input type="text" name="village" value="<%= family.village %>">
+
+            <label>Nyay Panchayat</label>
+            <input type="text" name="nyayPanchayat" value="<%= family.nyayPanchayat %>">
+
+            <label>Block</label>
+            <input type="text" name="block" value="<%= family.block %>">
+
+            <label>Old Residence</label>
+            <input type="text" name="oldResidence" value="<%= family.oldResidence %>">
+
+            <div class="modal-footer">
+                <button type="button" class="btn cancel" id="closeFamilyEdit">Cancel</button>
+                <button type="submit" class="btn save">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="memberEditModal" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>Edit Family Member</h3>
+    </div>
+    <form id="memberEditForm" method="POST">
+      <div class="modal-body">
+        <label>Name</label>
+        <input type="text" name="name" id="memberName">
+
+        <label>Guardian Name</label>
+        <input type="text" name="guardianName" id="memberGuardian">
+
+        <label>Other Details</label>
+        <input type="text" name="otherDetails" id="memberOther">
+
+        <label>Year</label>
+        <input type="text" name="year" id="memberYear">
+
+        <label>Year Type</label>
+        <!-- <input type="text" name="yearType" id="memberYearType"> -->
+        <select name="yearType" id="memberYearType" class="year-type-select">
+            <option value="birth">जन्म (DOB)</option>
+            <option value="death">मृत्यु (YOD)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn cancel" id="closeMemberEditBtn">Cancel</button>
+        <button type="submit" class="btn save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="memberAddModal" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>Add Family Member</h3>
+    </div>
+    <form id="memberAddForm" method="POST">
+      <div class="modal-body">
+        <label>Name</label>
+        <input type="text" name="name" id="memberName">
+
+        <label>Guardian Name</label>
+        <input type="text" name="guardianName" id="memberGuardian">
+
+        <label>Other Details</label>
+        <input type="text" name="otherDetails" id="memberOther">
+
+        <label>Year</label>
+        <input type="date" name="year" id="memberYear">
+
+        <label>Year Type</label>
+        <select name="yearType" id="memberYearType" class="year-type-select">
+            <option value="birth">जन्म (DOB)</option>
+            <option value="death">मृत्यु (YOD)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn cancel" id="closeMemberAddBtn">Cancel</button>
+        <button type="submit" class="btn save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+    const modal = document.getElementById("familyEditModal");
+    const openBtn = document.getElementById("openFamilyEdit");
+    const closeBtn = document.getElementById("closeFamilyEdit");
+    const memberModal = document.getElementById("memberEditModal");
+    const openMemberBtn = document.getElementById("openMemberEdit");
+    const closeMemberBtn = document.getElementById("closeMemberEditBtn");
+    const addMemberModal = document.getElementById("memberAddModal");
+    const openMemberAddModal = document.getElementById("openMemberAddModal");
+    const closeMemberAddBtn = document.getElementById("closeMemberAddBtn");
+
+    
+    document.querySelectorAll(".openMemberEdit").forEach(button => {
+        button.addEventListener("click", () => {
+            document.getElementById("memberName").value = button.dataset.name;
+            document.getElementById("memberGuardian").value = button.dataset.guardian;
+            document.getElementById("memberOther").value = button.dataset.other || "";
+            document.getElementById("memberYear").value = button.dataset.year || "";
+            document.getElementById("memberYearType").value = button.dataset.yeartype || "";
+
+            // memberForm.action = `/members/${button.dataset.id}?_method=PUT`;
+
+            memberModal.style.display = "flex";
+        });
+    });
+
+    
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+
+    closeMemberBtn.onclick = () => memberModal.style.display = "none";
+
+    openMemberAddModal.onclick = () => memberAddModal.style.display = "flex";
+    closeMemberAddBtn.onclick = () => memberAddModal.style.display = "none";
+
+    window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+        if(e.target === memberModal) modal.style.display = "none";
+        if(e.target === memberAddModal) memberAddModal.style.display = "none";
+    }
+</script>
 
 <%- include('shared/footer') %>
