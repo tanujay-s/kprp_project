@@ -598,3 +598,17 @@ ul li a.active {
   background: #f0f0f0;
   color: #222;
 }
+.image_placeholder {
+  position: absolute;
+  bottom: 30px;
+  left: 15px;
+  font-weight: 900;
+  color: #F0FFFF;
+}
+.image_placeholder_1 {
+  position: absolute;
+  bottom: 5px;
+  left: 15px;
+  font-weight: 900;
+  color: #F0FFFF;
+}
