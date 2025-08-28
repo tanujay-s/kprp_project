@@ -5,7 +5,7 @@ const memberSchema = new mongoose.Schema({
     name: { type: String, required: true },
     guardianName: { type: String },
     yearType: { type: String, enum: ["birth", "death"] },
-    year: { type: Number },
+    year: { type: Date },
     otherDetails: { type: String },
 }, { timestamps: true });
 

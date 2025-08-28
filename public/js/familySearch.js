@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <p><strong>नाम:</strong> ${m.name}</p>
                   <p><strong>पिता का नाम:</strong> ${m.guardianName}</p>
                   <p><strong>अन्य:</strong> ${m.otherDetails || "—"}</p>
-                  ${m.year ? `<p><strong>${m.yearType === "birth" ? "जन्म वर्ष:" : "मृत्यु वर्ष:"}</strong> ${m.year}</p>` : ""}
+                  ${m.year ? `<p><strong>${m.yearType === "birth" ? "जन्म वर्ष:" : "मृत्यु वर्ष:"}</strong> ${new Date(m.year).toLocaleDateString("en-GB")}</p>` : ""}
                   
                 </div>
               `).join("");
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <td>${m.name}</td>
                   <td>${m.guardianName}</td>
                   <td>${m.otherDetails || "—"}</td>
-                  <td>${m.year ? m.year + " (" + (m.yearType === "birth" ? "जन्म" : "मृत्यु") + ")" : "—"}</td>
+                  <td>${m.year ? new Date(m.year).toLocaleDateString("en-GB") + " (" + (m.yearType === "birth" ? "जन्म" : "मृत्यु") + ")" : "—"}</td>
                   
                 </tr>
               `).join("");
