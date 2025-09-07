@@ -215,6 +215,119 @@
             text-align: center;
         }
     }
+
+    .member-main {
+  padding: 20px;
+}
+
+.member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.member-header h2 {
+  font-size: 22px;
+}
+
+.member-header .btn-add-member {
+  border-radius: 5px;
+  height: 30px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  width: 100px;
+  background: #28a745;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Member card styles */
+.member-card {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+.member-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.member-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.member-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.member-actions .btn-edit,
+.member-actions .btn-delete {
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.member-actions .btn-edit {
+  background: #0d6efd;
+  color: white;
+}
+
+.member-actions .btn-edit:hover {
+  background: #084298;
+}
+
+.member-actions .btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.member-actions .btn-delete:hover {
+  background: #b02a37;
+}
+
+.member-card-body {
+  display: none;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #555;
+}
+
+.member-card-body p {
+  margin-bottom: 5px;
+}
+
+.member-arrow {
+  font-size: 16px;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.member-card-header.active .member-arrow {
+  transform: rotate(90deg);
+}
+
 </style>
 
 <div class="container">
@@ -250,15 +363,54 @@
                 <%= family.oldResidence %>
             </p>
         </div>
-        <p class="description">
-            <%= family.description || "No description provided." %>
-        </p>
-        <form action="/families/<%= family._id %>?_method=DELETE" method="POST">
-            <button type="submit" class="btn delete">Delete Family</button>
-        </form>
+        <button type="button" class="btn delete" onclick="deleteFamily('<%= family._id %>')">Delete</button>
     </section>
 
-    <section class="family-members">
+    <div class="member-main">
+        <div class="member-header">
+            <h2>Family Members</h2>
+            <a class="btn-add-member" id="openMemberAddModal">Add Member</a>
+        </div>
+    
+        <% if (members.length===0) { %>
+            <p style="color:red; text-align:center;">No members found</p>
+            <% } else { %>
+                <% members.forEach(member=> { %>
+                    <div class="member-card">
+                        <div class="member-card-header">
+                            <span class="member-name">
+                                <%= member.name %>
+                            </span>
+                            <div class="member-actions">
+                                <button class="btn-edit openMemberEdit" data-id="<%= member._id %>" data-name="<%= member.name %>"
+                                    data-guardian="<%= member.guardianName %>" data-other="<%= member.otherDetails %>"
+                                    data-year="<%= member.year %>" data-yeartype="<%= member.yearType %>">Edit</button>
+                                <button class="btn-delete" onclick="deleteMember('<%= member._id %>')">Delete</button>
+                                <span class="member-arrow">&#9654;</span>
+                            </div>
+                        </div>
+                        <div class="member-card-body">
+                            <p><strong>Father's Name:</strong>
+                                <%= member.guardianName %>
+                            </p>
+                            <p><strong>Other Details:</strong>
+                                <%= member.otherDetails %>
+                            </p>
+                            <% if(member.year){ %>
+                                <p><strong>Year:</strong>
+                                    <%= member.year.toLocaleDateString("en-GB") %> (<%= member.yearType==="birth" ? "जन्म"
+                                            : "मृत्यु" %>)
+                                </p>
+                                <% } else { %>
+                                    <p><strong>Year:</strong> -</p>
+                                    <% } %>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } %>
+    </div>
+
+    <!-- <section class="family-members">
         <div class="header">
             <h2>Family Members</h2>
             <a class="btn add" id="openMemberAddModal">Add Member</a>
@@ -305,18 +457,15 @@
                                         data-guardian="<%= member.guardianName %>" 
                                         data-other="<%= member.otherDetails %>" 
                                         data-year="<%= member.year %>"
-                                        data-yeartype="<%= member.yearType %>">Edit</a>
-                                    <form action="/members/<%= member._id %>?_method=DELETE" method="POST"
-                                        style="display:inline;">
-                                        <button type="submit" class="btn small delete">Delete</button>
-                                    </form>
+                                        data-yeartype="<%= member.yearType %>">Edit</a>                                    
+                                    <button type="button" class="btn small delete" onclick="deleteMember('<%= member._id %>')">Delete</button>
                                 </td>
                             </tr>
                             <% }) %>
                                 <% } %>
             </tbody>
         </table>
-    </section>
+    </section> -->
    
 </div>
 
@@ -343,7 +492,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn cancel" id="closeFamilyEdit">Cancel</button>
-                <button type="submit" class="btn save">Save</button>
+                <button disabled class="btn save">Save</button>
             </div>
         </form>
     </div>
@@ -366,7 +515,7 @@
         <input type="text" name="otherDetails" id="memberOther">
 
         <label>Year</label>
-        <input type="text" name="year" id="memberYear">
+        <input type="date" name="year" id="memberYear" placeholder="DD/MM/YYYY">
 
         <label>Year Type</label>
         <select name="yearType" id="memberYearType" class="year-type-select">
@@ -427,14 +576,33 @@
     const addMemberModal = document.getElementById("memberAddModal");
     const openMemberAddModal = document.getElementById("openMemberAddModal");
     const closeMemberAddBtn = document.getElementById("closeMemberAddBtn");
+    let member_id;
 
+    document.querySelectorAll(".member-card-header").forEach(header => {
+    header.addEventListener("click", function(e) {
+        if(e.target.classList.contains("btn-edit") || e.target.classList.contains("btn-delete")) return;
+
+        const cardBody = this.nextElementSibling;
+        const isOpen = cardBody.style.display === "block";
+
+        document.querySelectorAll(".member-card-body").forEach(body => body.style.display = "none");
+        document.querySelectorAll(".member-card-header").forEach(h => h.classList.remove("active"));
+
+        if(!isOpen){
+        cardBody.style.display = "block";
+        this.classList.add("active");
+        }
+    });
+    });
+    
 
     document.querySelectorAll(".openMemberEdit").forEach(button => {
         button.addEventListener("click", () => {
+            member_id = button.dataset.id;
             document.getElementById("memberName").value = button.dataset.name;
             document.getElementById("memberGuardian").value = button.dataset.guardian;
             document.getElementById("memberOther").value = button.dataset.other || "";
-            document.getElementById("memberYear").value = button.dataset.year || "";
+            document.getElementById("memberYear").value = button.dataset.year ? new Date(button.dataset.year).toLocaleDateString("en-GB") : "";
             document.getElementById("memberYearType").value = button.dataset.yeartype || "";
 
             // memberForm.action = `/members/${button.dataset.id}?_method=PUT`;
@@ -478,6 +646,7 @@
                 const result = await res.json();
                 alert("Member added successfully!");
                 memberAddModal.style.display = "none";
+                location.reload();
             } else {
                 console.error("Error:", res.status);
                 alert("Failed to add member");
@@ -488,6 +657,83 @@
             memberAddModal.style.display = "none";
         }
     });
+
+    document.getElementById("memberEditForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+        
+            const id = member_id;
+
+            const formData = {
+                name: document.getElementById("memberName").value.trim(),
+                guardianName: document.getElementById("memberGuardian").value.trim(),
+                otherDetails: document.getElementById("memberOther").value.trim(),
+                year: document.getElementById("memberYear").value || null,
+                yearType: document.getElementById("memberYearType").value || null
+            };
+
+            if (!formData.year) {
+                formData.yearType = null;
+            }
+
+            Object.keys(formData).forEach(key => {
+                if (formData[key] === "" || formData[key] === undefined) {
+                    delete formData[key];
+                }
+            });
+
+            try {
+                const res = await fetch(`/member/edit/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("✅ Member updated successfully!");
+                    location.reload();
+                } else {
+                    alert("❌ Error: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error updating member:", err);
+                alert("Something went wrong!");
+            }
+    });
+
+    async function deleteMember(memberId) {
+        if (!confirm("Are you sure you want to delete this member?")) return;
+
+        const res = await fetch(`/members/${memberId}`, { method: "DELETE" });
+
+        if (res.ok) {
+            alert("Member deleted successfully");
+            location.reload();
+        } else {
+            const error = await res.json();
+            alert("Error: " + error.message);
+        }
+    }
+
+    async function deleteFamily(familyId) {
+        if(!confirm("Are you sure you want to delete this family?")) return;
+        
+        try {
+            const res = await fetch(`/family/${familyId}`, { method: "DELETE" });
+
+            if (res.ok) {
+                alert("Family deleted successfully");
+                window.location.href = "/admin/dashboard";
+            } else {
+                const error = await res.json();
+                alert("Error: " + error.message);
+            }
+        } catch (err) {
+            alert("Network error: " + err.message);
+        }
+    }
 
     window.onclick = (e) => {
         if (e.target === modal) modal.style.display = "none";

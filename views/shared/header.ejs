@@ -8,7 +8,7 @@
   <script src="https://kit.fontawesome.com/d3aa2aab48.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <header>
+  <!-- <header>
     <div class="navbar-logo">
       <span>
         <img src="/images/Logosvg.svg" style="width:30px; height: 20px;" />
@@ -21,7 +21,7 @@
           <li>
             <a href="/admin/dashboard"  class="<%= (activePage === 'dashboard') ? 'active' : '' %>">Admin Dashboard</a>
           </li>
-          <li>
+          <li style="padding-top: 2px;">
             <form action="/admin/logout" method="POST" style="display:inline;">
               <button type="submit" class="logout_btn">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout Admin
@@ -34,4 +34,46 @@
             <% } %>
       </ul>
     </nav>
-  </header>
+  </header> -->
+
+  <header>
+  <div class="navbar-logo">
+    <img src="/images/Logosvg.svg" style="width:30px; height:20px;" />
+    KPRP
+  </div>
+
+  <i class="fa-solid fa-bars hamburger" id="hamburger"></i>
+
+  <nav>
+    <ul id="nav-menu">
+      <% if (isAdmin) { %>
+        <li>
+          <a href="/admin/dashboard"  class="<%= (activePage === 'dashboard') ? 'active' : '' %>">Admin Dashboard</a>
+        </li>
+        <li style="padding-top: 2px;">
+          <form action="/admin/logout" method="POST" style="display:inline;">
+            <button type="submit" class="logout_btn">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout Admin
+            </button>
+          </form>
+        </li>
+      <% } else { %>
+        <li><a href="/" class="<%= (activePage === 'home') ? 'active' : '' %>"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="/admin/login" class="<%= (activePage === 'adminLogin') ? 'active' : '' %>"><i class="fa-solid fa-user"></i> Admin</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>
+
+<script>
+const hamburger = document.getElementById("hamburger");
+const navMenu = document.getElementById("nav-menu");
+
+if (window.innerWidth >= 768) {
+    hamburger.style.display = "none";
+}
+
+hamburger.addEventListener("click", () => {
+  navMenu.classList.toggle("show");
+});
+</script>

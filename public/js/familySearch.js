@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
               if (members.length === 0) {
                 return `
                   <div class="family-card">
-                    <h4>🏠 परिवार: ${family.lineageName}</h4>
+                    <h4>🏠 वंश: ${family.lineageName}</h4>
                     <h6 class="family-meta"">
                   (क्षत्रिय: ${family.clan}, 
                    ग्राम: ${family.village},
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
               return `
                 <div class="family-card">
-                  <h4>🏠 परिवार: ${family.lineageName}</h4>
+                  <h4>🏠 वंश: ${family.lineageName}</h4>
                   <h6 class="family-meta"">
                   (क्षत्रिय: ${family.clan}, 
                    ग्राम: ${family.village},
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
               if (members.length === 0) {
                 return `
                   <div class="table-container">
-                    <h3 style="text-align: center;">🏠 परिवार: ${family.lineageName}</h3>
+                    <h3 style="text-align: center;">🏠 वंश: ${family.lineageName}</h3>
                     <h6 class="family-meta"">
                   (क्षत्रिय: ${family.clan}, 
                    ग्राम: ${family.village},
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
               return `
                 <div class="table-container">
-                  <h3 style="text-align: center;">🏠 परिवार: ${family.lineageName}</h3>
+                  <h3 style="text-align: center;">🏠 वंश: ${family.lineageName}</h3>
                   <h6 class="family-meta"">
                   (क्षत्रिय: ${family.clan}, 
                    ग्राम: ${family.village},
