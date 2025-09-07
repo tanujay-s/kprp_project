@@ -24,6 +24,7 @@ header {
   flex-wrap: wrap;
   position: relative;
   z-index: 1000;
+  margin-bottom: 20px;
 }
 
 .navbar-logo {
