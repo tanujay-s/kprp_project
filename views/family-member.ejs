@@ -1,0 +1,745 @@
+<%- include('shared/header') %>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f9f9fc;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .family-details,
+    .family-members {
+        background: #fff;
+        padding: 20px;
+        margin-bottom: 25px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .header h2 {
+        margin: 0;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .description {
+        margin: 10px 0;
+        color: #444;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th,
+    td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background: #f1f1f1;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .btn.edit {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn.delete {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn.add {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn.small {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    form {
+        display: inline;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-dialog {
+        background: #fff;
+        border-radius: 12px;
+        width: 95%;
+        max-width: 450px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 15px;
+    }
+
+    .modal-header .back {
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .modal-body label {
+        display: block;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    .modal-body input,
+    .modal-body textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: #f5f6fa;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn.cancel {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn.save {
+        background: #007bff;
+        border: none;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .year-type-select{
+        width: 100%;
+        height: 30px;
+        text-align: center;
+    }
+
+    @media (max-width: 480px) {
+        .modal-dialog {
+            width: 90%;
+            max-width: 100%;
+            max-height: 520px;
+            height: 100%;
+            margin: 0;
+            border-radius: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding-top: 10px;
+            padding-bottom: 5px;
+            margin-top: auto;
+        }
+
+        .modal-body input,
+        .modal-body textarea {
+            font-size: 16px;
+        }
+
+        .btn.cancel,
+        .btn.save {
+            flex: 1;
+            text-align: center;
+        }
+    }
+
+    .member-main {
+  padding: 20px;
+}
+
+.member-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.member-header h2 {
+  font-size: 22px;
+}
+
+.member-header .btn-add-member {
+  border-radius: 5px;
+  height: 30px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  width: 100px;
+  background: #28a745;
+  color: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Member card styles */
+.member-card {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+.member-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.member-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.member-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.member-actions .btn-edit,
+.member-actions .btn-delete {
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.member-actions .btn-edit {
+  background: #0d6efd;
+  color: white;
+}
+
+.member-actions .btn-edit:hover {
+  background: #084298;
+}
+
+.member-actions .btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+.member-actions .btn-delete:hover {
+  background: #b02a37;
+}
+
+.member-card-body {
+  display: none;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #555;
+}
+
+.member-card-body p {
+  margin-bottom: 5px;
+}
+
+.member-arrow {
+  font-size: 16px;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.member-card-header.active .member-arrow {
+  transform: rotate(90deg);
+}
+
+</style>
+
+<div class="container">
+
+    <section class="family-details">
+        <div class="header">
+            <h2>Family Details</h2>
+            <a class="btn edit" id="openFamilyEdit">Edit Family</a>
+        </div>
+        <div class="details-grid">
+            <p><strong>Clan Name:</strong>
+                <%= family.lineageName %>
+            </p>
+            <p><strong>Family ID:</strong>
+                <%= family._id %>
+            </p>
+            <p><strong>Date Created:</strong>
+                <%= family.createdAt.toDateString() %>
+            </p>
+            <p><strong>Number of Members:</strong>
+                <%= members.length %>
+            </p>
+            <p><strong>Village:</strong>
+                <%= family.village %>
+            </p>
+            <p><strong>Nyay Panchayat:</strong>
+                <%= family.nyayPanchayat %>
+            </p>
+            <p><strong>Block:</strong>
+                <%= family.block %>
+            </p>
+            <p><strong>Old Residence:</strong>
+                <%= family.oldResidence %>
+            </p>
+        </div>
+        <button type="button" class="btn delete" onclick="deleteFamily('<%= family._id %>')">Delete</button>
+    </section>
+
+    <div class="member-main">
+        <div class="member-header">
+            <h2>Family Members</h2>
+            <a class="btn-add-member" id="openMemberAddModal">Add Member</a>
+        </div>
+    
+        <% if (members.length===0) { %>
+            <p style="color:red; text-align:center;">No members found</p>
+            <% } else { %>
+                <% members.forEach(member=> { %>
+                    <div class="member-card">
+                        <div class="member-card-header">
+                            <span class="member-name">
+                                <%= member.name %>
+                            </span>
+                            <div class="member-actions">
+                                <button class="btn-edit openMemberEdit" data-id="<%= member._id %>" data-name="<%= member.name %>"
+                                    data-guardian="<%= member.guardianName %>" data-other="<%= member.otherDetails %>"
+                                    data-year="<%= member.year %>" data-yeartype="<%= member.yearType %>">Edit</button>
+                                <button class="btn-delete" onclick="deleteMember('<%= member._id %>')">Delete</button>
+                                <span class="member-arrow">&#9654;</span>
+                            </div>
+                        </div>
+                        <div class="member-card-body">
+                            <p><strong>Father's Name:</strong>
+                                <%= member.guardianName %>
+                            </p>
+                            <p><strong>Other Details:</strong>
+                                <%= member.otherDetails %>
+                            </p>
+                            <% if(member.year){ %>
+                                <p><strong>Year:</strong>
+                                    <%= member.year.toLocaleDateString("en-GB") %> (<%= member.yearType==="birth" ? "जन्म"
+                                            : "मृत्यु" %>)
+                                </p>
+                                <% } else { %>
+                                    <p><strong>Year:</strong> -</p>
+                                    <% } %>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } %>
+    </div>
+
+    <!-- <section class="family-members">
+        <div class="header">
+            <h2>Family Members</h2>
+            <a class="btn add" id="openMemberAddModal">Add Member</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Father's Name</th>
+                    <th>Others</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (members.length===0) { %>
+                    <tr>
+                        <td colspan="5" style="text-align:center;">No members found</td>
+                    </tr>
+                    <% } else { %>
+                        <% members.forEach(member=> { %>
+                            <tr>
+                                <td>
+                                    <%= member.name %>
+                                </td>
+                                <td>
+                                    <%= member.guardianName %>
+                                </td>
+                                <td>
+                                    <%= member.otherDetails %>
+                                </td>
+                                <% if (member.year) { %>
+                                    <td>
+                                        <%= member.year.toLocaleDateString("en-GB") %>
+                                        (<%= member.yearType === "birth" ? "जन्म" : "मृत्यु" %>)
+                                    </td>
+                                <% }  else {%>
+                                        <td>-</td>
+                                    <%} %>
+                                <td>
+                                    <a class="btn small edit openMemberEdit"  
+                                        data-id="<%= member._id %>" 
+                                        data-name="<%= member.name %>"
+                                        data-guardian="<%= member.guardianName %>" 
+                                        data-other="<%= member.otherDetails %>" 
+                                        data-year="<%= member.year %>"
+                                        data-yeartype="<%= member.yearType %>">Edit</a>                                    
+                                    <button type="button" class="btn small delete" onclick="deleteMember('<%= member._id %>')">Delete</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } %>
+            </tbody>
+        </table>
+    </section> -->
+   
+</div>
+
+<div id="familyEditModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>Edit Family</h3>
+        </div>
+        <form action="/families/<%= family._id %>?_method=PUT" method="POST" class="modal-body">
+            <label>Name of Clan</label>
+            <input type="text" name="lineageName" value="<%= family.lineageName %>" required>
+
+            <label>Village</label>
+            <input type="text" name="village" value="<%= family.village %>">
+
+            <label>Nyay Panchayat</label>
+            <input type="text" name="nyayPanchayat" value="<%= family.nyayPanchayat %>">
+
+            <label>Block</label>
+            <input type="text" name="block" value="<%= family.block %>">
+
+            <label>Old Residence</label>
+            <input type="text" name="oldResidence" value="<%= family.oldResidence %>">
+
+            <div class="modal-footer">
+                <button type="button" class="btn cancel" id="closeFamilyEdit">Cancel</button>
+                <button disabled class="btn save">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="memberEditModal" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>Edit Family Member</h3>
+    </div>
+    <form id="memberEditForm" method="POST">
+      <div class="modal-body">
+        <label>Name</label>
+        <input type="text" name="name" id="memberName">
+
+        <label>Guardian Name</label>
+        <input type="text" name="guardianName" id="memberGuardian">
+
+        <label>Other Details</label>
+        <input type="text" name="otherDetails" id="memberOther">
+
+        <label>Year</label>
+        <input type="date" name="year" id="memberYear" placeholder="DD/MM/YYYY">
+
+        <label>Year Type</label>
+        <select name="yearType" id="memberYearType" class="year-type-select">
+            <option value="">वर्ष प्रकार चुने</option>
+            <option value="birth">जन्म (DOB)</option>
+            <option value="death">मृत्यु (YOD)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn cancel" id="closeMemberEditBtn">Cancel</button>
+        <button type="submit" class="btn save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="memberAddModal" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3>Add Family Member</h3>
+    </div>
+    <form id="memberAddForm">
+      <div class="modal-body">
+        <label>Name</label>
+        <input type="text" name="name" id="memberAddName">
+
+        <label>Guardian Name</label>
+        <input type="text" name="guardianName" id="memberAddGuardian">
+
+        <label>Other Details</label>
+        <input type="text" name="otherDetails" id="memberAddOther">
+
+        <label>Year</label>
+        <input type="date" name="year" id="memberAddYear">
+
+        <label>Year Type</label>
+        <select name="yearType" id="memberAddYearType" class="year-type-select">
+            <option value="">वर्ष प्रकार चुने</option>
+            <option value="birth">जन्म (DOB)</option>
+            <option value="death">मृत्यु (YOD)</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn cancel" id="closeMemberAddBtn">Cancel</button>
+        <button type="submit" class="btn save">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+    const modal = document.getElementById("familyEditModal");
+    const openBtn = document.getElementById("openFamilyEdit");
+    const closeBtn = document.getElementById("closeFamilyEdit");
+    const memberModal = document.getElementById("memberEditModal");
+    const openMemberBtn = document.getElementById("openMemberEdit");
+    const closeMemberBtn = document.getElementById("closeMemberEditBtn");
+    const addMemberModal = document.getElementById("memberAddModal");
+    const openMemberAddModal = document.getElementById("openMemberAddModal");
+    const closeMemberAddBtn = document.getElementById("closeMemberAddBtn");
+    let member_id;
+
+    document.querySelectorAll(".member-card-header").forEach(header => {
+    header.addEventListener("click", function(e) {
+        if(e.target.classList.contains("btn-edit") || e.target.classList.contains("btn-delete")) return;
+
+        const cardBody = this.nextElementSibling;
+        const isOpen = cardBody.style.display === "block";
+
+        document.querySelectorAll(".member-card-body").forEach(body => body.style.display = "none");
+        document.querySelectorAll(".member-card-header").forEach(h => h.classList.remove("active"));
+
+        if(!isOpen){
+        cardBody.style.display = "block";
+        this.classList.add("active");
+        }
+    });
+    });
+    
+
+    document.querySelectorAll(".openMemberEdit").forEach(button => {
+        button.addEventListener("click", () => {
+            member_id = button.dataset.id;
+            document.getElementById("memberName").value = button.dataset.name;
+            document.getElementById("memberGuardian").value = button.dataset.guardian;
+            document.getElementById("memberOther").value = button.dataset.other || "";
+            document.getElementById("memberYear").value = button.dataset.year ? new Date(button.dataset.year).toLocaleDateString("en-GB") : "";
+            document.getElementById("memberYearType").value = button.dataset.yeartype || "";
+
+            // memberForm.action = `/members/${button.dataset.id}?_method=PUT`;
+
+            memberModal.style.display = "flex";
+        });
+    });
+
+
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+
+    closeMemberBtn.onclick = () => memberModal.style.display = "none";
+
+    openMemberAddModal.onclick = () => memberAddModal.style.display = "flex";
+    closeMemberAddBtn.onclick = () => memberAddModal.style.display = "none";
+
+    document.getElementById("memberAddForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const familyId = "<%= family._id %>";
+        console.log("Family ID:", familyId);
+        const data = {
+            familyId: familyId,
+            name: document.getElementById("memberAddName").value,
+            guardianName: document.getElementById("memberAddGuardian").value,
+            otherDetails: document.getElementById("memberAddOther").value,
+            year: document.getElementById("memberAddYear").value,
+            yearType: document.getElementById("memberAddYearType").value,
+        };
+
+        try {
+            const res = await fetch(`/member/add`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                const result = await res.json();
+                alert("Member added successfully!");
+                memberAddModal.style.display = "none";
+                location.reload();
+            } else {
+                console.error("Error:", res.status);
+                alert("Failed to add member");
+                memberAddModal.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Request failed", err);
+            memberAddModal.style.display = "none";
+        }
+    });
+
+    document.getElementById("memberEditForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+        
+            const id = member_id;
+
+            const formData = {
+                name: document.getElementById("memberName").value.trim(),
+                guardianName: document.getElementById("memberGuardian").value.trim(),
+                otherDetails: document.getElementById("memberOther").value.trim(),
+                year: document.getElementById("memberYear").value || null,
+                yearType: document.getElementById("memberYearType").value || null
+            };
+
+            if (!formData.year) {
+                formData.yearType = null;
+            }
+
+            Object.keys(formData).forEach(key => {
+                if (formData[key] === "" || formData[key] === undefined) {
+                    delete formData[key];
+                }
+            });
+
+            try {
+                const res = await fetch(`/member/edit/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("✅ Member updated successfully!");
+                    location.reload();
+                } else {
+                    alert("❌ Error: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error updating member:", err);
+                alert("Something went wrong!");
+            }
+    });
+
+    async function deleteMember(memberId) {
+        if (!confirm("Are you sure you want to delete this member?")) return;
+
+        const res = await fetch(`/members/${memberId}`, { method: "DELETE" });
+
+        if (res.ok) {
+            alert("Member deleted successfully");
+            location.reload();
+        } else {
+            const error = await res.json();
+            alert("Error: " + error.message);
+        }
+    }
+
+    async function deleteFamily(familyId) {
+        if(!confirm("Are you sure you want to delete this family?")) return;
+        
+        try {
+            const res = await fetch(`/family/${familyId}`, { method: "DELETE" });
+
+            if (res.ok) {
+                alert("Family deleted successfully");
+                window.location.href = "/admin/dashboard";
+            } else {
+                const error = await res.json();
+                alert("Error: " + error.message);
+            }
+        } catch (err) {
+            alert("Network error: " + err.message);
+        }
+    }
+
+    window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+        if (e.target === memberModal) modal.style.display = "none";
+        if (e.target === memberAddModal) memberAddModal.style.display = "none";
+    }
+</script>
+
+<%- include('shared/footer') %>

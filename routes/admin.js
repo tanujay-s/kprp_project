@@ -37,14 +37,14 @@ router.get('/login', (req, res) => {
   res.render('admin-login',  { activePage: "adminLogin" });
 });
 
-router.get('/add-member', requireAdmin, (req, res) => {
-  res.render('addMember', { activePage: "" });
+router.get('/add-family', requireAdmin, (req, res) => {
+  res.render('addFamily', { activePage: "" });
 });
 
 router.get("/dashboard", requireAdmin, async (req, res) => {
   try {
     const families = await Family.find().sort({ createdAt: 1 });
-    res.render("admin", { families, activePage: "dashboard" }); 
+    res.render("dashboard", { families, activePage: "dashboard" }); 
   } catch (err) {
     console.error("Error fetching families:", err);
     res.status(500).send("Error loading families");
@@ -88,6 +88,21 @@ router.get("/search-family", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/:id/members", requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const family = await Family.findById(req.params.id);
+    if (!family) {
+      return res.status(404).send("Family not found");
+    }
+    const members = await Member.find({ familyId: id });
+    res.render("family-member", {activePage: "", family, members });
+    // res.json(members);
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 });
 

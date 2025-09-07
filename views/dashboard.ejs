@@ -1,0 +1,310 @@
+<%- include('shared/header') %>
+<!-- <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  line-height: 1.5;
+}
+
+.main-content {
+  padding: 25px;
+}
+
+.content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+}
+
+.content:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.content h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #222;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #f0f2f5;
+}
+
+table th, 
+table td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+table th {
+  font-weight: 600;
+  color: #444;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+table tr:hover td {
+  background: #fafafa;
+}
+
+.view-btn {
+  color: #0d6efd;
+  text-decoration: none;
+  font-weight: 500;
+  margin-right: 12px;
+  transition: color 0.3s;
+}
+
+.view-btn:hover {
+  color: #084298;
+  text-decoration: underline;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.3s ease-in-out;
+}
+
+.delete-btn:hover {
+  background: #b02a37;
+}
+.btn.add {
+  border-radius: 5px;
+  height: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  width: 80px;
+  background: #28a745;
+  color: white;
+}
+</style> -->
+
+  <!-- <div class="main-content">
+
+    <div class="content">
+      <div style="display: flex; align-items: baseline; justify-content: space-between;">
+        <h2>Family Management</h2>
+        <a href="/admin/add-family" class="btn add">Add Family</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>CLAN NAME (वंश)</th>
+            <th>VILLAGE (गांव)</th>
+            <th>NYAY PANCHAYAT (न्याय पंचायत)</th>
+            <th>BLOCK (ब्लॉक)</th>
+            <th>OLD RESIDENCE (पूर्व निवास)</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (families.length === 0) { %>
+            <tr>
+              <td colspan="7" style="text-align:center; color:red;">No families added yet.</td>
+            </tr>
+          <% } else { %>
+            <% families.forEach(family => { %>
+              <tr>
+                <td><%= family.lineageName %></td>
+                <td><%= family.village %></td>
+                <td><%= family.nyayPanchayat %></td>
+                <td><%= family.block %></td>
+                <td><%= family.oldResidence %></td>
+                <td>
+                  <a href="/admin/<%= family._id %>/members" class="view-btn">View Family</a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .header h2 {
+    font-size: 22px;
+  }
+
+  .header .btn.add {
+    border-radius: 5px;
+    height: 30px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    width: 90px;
+    background: #28a745;
+    color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Card style */
+  .family-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+  }
+
+  .family-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .card-header .lineage {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .card-header .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-header .view-btn {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .card-header .arrow {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .card-header.active .arrow {
+    transform: rotate(90deg);
+  }
+
+  .card-body {
+    display: none;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #555;
+  }
+
+  .card-body p {
+    margin-bottom: 5px;
+  }
+</style>
+  <div class="main-content">
+    <div class="header">
+      <h2>Family Management</h2>
+      <a href="/admin/add-family" class="btn add">Add Family</a>
+    </div>
+  
+    <% if(families.length===0){ %>
+      <p style="color:red; text-align:center;">No families added yet.</p>
+      <% } else { %>
+        <% families.forEach(family=> { %>
+          <div class="family-card">
+            <div class="card-header">
+              <span class="lineage">
+                <%= family.lineageName %>
+              </span>
+              <div class="actions">
+                <a href="/admin/<%= family._id %>/members" class="view-btn">View Family</a>
+                <span class="arrow">&#9654;</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p><strong>Village:</strong>
+                <%= family.village %>
+              </p>
+              <p><strong>Nyay Panchayat:</strong>
+                <%= family.nyayPanchayat %>
+              </p>
+              <p><strong>Block:</strong>
+                <%= family.block %>
+              </p>
+            </div>
+          </div>
+          <% }) %>
+            <% } %>
+  </div>
+
+  <script>
+document.querySelectorAll(".card-header").forEach(header => {
+  header.addEventListener("click", function() {
+    const cardBody = this.nextElementSibling;
+    const isOpen = cardBody.style.display === "block";
+
+    document.querySelectorAll(".card-body").forEach(body => body.style.display = "none");
+    document.querySelectorAll(".card-header").forEach(h => h.classList.remove("active"));
+
+    if(!isOpen){
+      cardBody.style.display = "block";
+      this.classList.add("active");
+    }
+  });
+});
+</script>
+
+<%- include('shared/footer') %>
