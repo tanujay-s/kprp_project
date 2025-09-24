@@ -3,6 +3,11 @@ const router = express.Router();
 require ('dotenv').config();
 const Family = require('../models/family');
 const Member = require('../models/member');
+const multer = require('multer');
+const XLSX = require('xlsx');
+
+const storage = multer.memoryStorage();//store uploaded file in the memory
+const upload = multer({storage});// actual middleware that handles file upload
 
 function requireAdmin(req, res, next) {
   if (req.session.isAdmin) {
@@ -119,8 +124,108 @@ router.delete("/cleanup", async (req, res) => {
     await Member.deleteMany({});
     res.json({ message: "All families and members deleted" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err?.message || err });
   }
+});
+
+router.post("/upload-family", upload.single("file"), async (req, res) => {
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded!" });
+  }
+
+  const workbook = XLSX.read(req.file.buffer, { type: "buffer" });
+  const sheetName = workbook.SheetNames[0];
+  const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+  if (data.length === 0) {
+    return res.status(400).json({ message: "Empty Excel sheet" });
+  }
+
+  const familyInfo = data[0];
+
+  const newFamily = new Family({
+    lineageName: familyInfo.Clan.trim(),
+    clan: familyInfo.Kshatriya.trim(),
+    village: familyInfo.Village.trim(),
+    nyayPanchayat: familyInfo.Panchayat.trim(),
+    block: familyInfo.Block.trim(),
+    oldResidence: familyInfo.Old_resident.trim(),
+  });
+
+  console.log("family saved: ", newFamily);
+  const savedFamily = await newFamily.save();
+  if (savedFamily._id) {
+    for (const row of data) {
+
+      const name = row.Name && row.Name.trim() !== "" ? row.Name.trim() : null;
+      const guardianName = row.Father && row.Father.trim() !== "" ? row.Father.trim() : null;
+      const otherDetails = row.Other && row.Other.trim() !== "" ? row.Other.trim() : null;
+
+      let year = row.Year;
+      let yearType = row.Year_type ? row.Year_type.toString().trim().toLowerCase() : null;
+
+      if (year) {
+        if (typeof year === "number") {
+          // Excel numeric date → convert to YYYY-MM-DD without timezone shift
+          const parsed = XLSX.SSF.parse_date_code(year);
+          if (parsed) {
+            year = `${parsed.y}-${String(parsed.m).padStart(2, "0")}-${String(parsed.d).padStart(2, "0")}`;
+          } else {
+            year = null;
+          }
+        } else if (/^\d{4}$/.test(year.toString())) {
+          // Only 4-digit year
+          year = year.toString();
+        } else if (typeof year === "string" && year.includes("/")) {
+          // String like "16/08/2004"
+          const [day, month, yr] = year.split("/");
+          if (day && month && yr) {
+            year = `${yr}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          } else {
+            year = null;
+          }
+        } else if (!isNaN(Date.parse(year))) {
+          // ISO date string "2004-08-16"
+          const d = new Date(year);
+          year = d.toISOString().split("T")[0];
+        } else {
+          year = null;
+        }
+      } else {
+        year = null;
+      }
+
+      // Validate yearType
+      if (!year) {
+        yearType = null;
+      } else if (yearType !== "birth" && yearType !== "death") {
+        yearType = null;
+      }
+
+      const newMember = new Member({
+        familyId: savedFamily._id,
+        name,
+        guardianName,
+        year,
+        yearType,
+        otherDetails,
+      });
+      console.log(newMember);
+
+      try {
+        const savedMember = await newMember.save();
+        console.log(`✅ Member "${savedMember.name}" saved successfully`);
+      } catch (err) {
+        console.error(`❌ Failed to save member "${name || "Unknown"}":`, err.message);
+      }
+    }
+    res.status(200).json({ message: "Api work complete" });
+  } else {
+    res.status(400).json({ message: "Failed to add family" });
+  }
+
+
 });
 
 module.exports = router;
