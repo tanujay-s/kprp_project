@@ -145,12 +145,12 @@ router.post("/upload-family", upload.single("file"), async (req, res) => {
   const familyInfo = data[0];
 
   const newFamily = new Family({
-    lineageName: familyInfo.Clan.trim(),
-    clan: familyInfo.Kshatriya.trim(),
-    village: familyInfo.Village.trim(),
-    nyayPanchayat: familyInfo.Panchayat.trim(),
-    block: familyInfo.Block.trim(),
-    oldResidence: familyInfo.Old_resident.trim(),
+    lineageName: familyInfo.Clan ? familyInfo.Clan.trim() : '',
+    clan: familyInfo.Kshatriya ? familyInfo.Kshatriya.trim() : '',
+    village: familyInfo.Village ? familyInfo.Village.trim() : '',
+    nyayPanchayat: familyInfo.Panchayat ? familyInfo.Panchayat.trim() : '',
+    block: familyInfo.Block ? familyInfo.Block.trim() : '',
+    oldResidence: familyInfo.Old_resident ? familyInfo.Old_resident.trim() : '',
   });
 
   console.log("family saved: ", newFamily);

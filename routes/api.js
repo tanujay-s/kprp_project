@@ -152,6 +152,36 @@ router.put("/member/edit/:id", async (req, res) => {
   }
 });
 
+router.put("/family/edit/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let updates = req.body;
+
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === "" || updates[key] === undefined) {
+        delete updates[key];
+      }
+    });
+
+    const updatedFamily = await Family.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedFamily) {
+      return res.status(404).json({ message: "Family not found" });
+    }
+
+    res.json({
+      message: "Family details updated successfully",
+      family: updatedFamily
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating family", error: error.message });
+  }
+});
+
 router.delete("/members/:id", async (req, res) => {
   try {
     const { id } = req.params;
