@@ -220,6 +220,13 @@ router.post("/upload-family", upload.single("file"), async (req, res) => {
         console.error(`❌ Failed to save member "${name || "Unknown"}":`, err.message);
       }
     }
+    console.log(`
+      .......................................
+      .                                     . 
+      .            UPDATE COMPLETE          .
+      .                                     .
+      .......................................
+    `)
     res.status(200).json({ message: "Api work complete" });
   } else {
     res.status(400).json({ message: "Failed to add family" });
