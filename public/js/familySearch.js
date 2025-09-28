@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const backBtn = document.getElementById("backBtn");
   const form_section = document.querySelector('.admin-member-form-container');
   const familt_result_section = document.getElementById("family-results-section");
+  const family_search_tab = document.querySelector('.family-search-tabs');
 
   const hierarchy = {
     "गौरा": {
@@ -79,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         familt_result_section.style.display = "block";
         backBtnSection.style.display = "block"; 
         form_section.style.display = "none";
+        family_search_tab.style.display = "none";
         document.querySelector(".family-list").style.display = "none";
         resultsDiv.innerHTML = `<p style="color:red;">${"कोई परिवार नहीं मिला"}</p>`;
         resultsDiv.style.textAlign = "center";
@@ -94,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         backBtnSection.style.display = "block";
         familt_result_section.style.display = "block"; 
         form_section.style.display = "none";
+        family_search_tab.style.display = "none";
         document.querySelector(".family-list").style.display = "none";
         resultsDiv.innerHTML = data.map(family => {
             const members = [...family.members];
@@ -203,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     familt_result_section.style.display = "none";
     backBtnSection.style.display = "none";
     form_section.style.display = "block";
+    family_search_tab.style.display = "block";
     form.reset();
     document.getElementById("nyaySelect").disabled = true;
     document.getElementById("villageSelect").disabled = true;

@@ -5,35 +5,43 @@
   <h2 class="page-title">परिवार विवरण</h2>
   <p class="page-subtitle">क्षेत्र का चयन करें और संबंधित परिवारों को देखें</p>
 
+<div class="family-search-tabs" style="text-align: center;">
+  <button type="button" class="family-search-tab-btn active" id="familySearchByLocationTab">स्थान के अनुसार
+    खोजें</button>
+  <button type="button" class="family-search-tab-btn" id="familySearchByNameTab">परिवार के नाम से खोजें</button>
+</div>
+
 <section class="admin-member-form-container">
   <form class="admin-member-form">
-  <div class="form-group">
-    <label for="blockSelect">ब्लॉक:</label>
-    <select id="blockSelect">
-      <option value="">-- ब्लॉक चुनें --</option>
-      <option value="रानीगंज">रानीगंज</option>
-      <option value="गौरा">गौरा</option>
-    </select>
-  </div>
+    <div class="form-group">
+      <label for="blockSelect">ब्लॉक:</label>
+      <select id="blockSelect">
+        <option value="">-- ब्लॉक चुनें --</option>
+        <option value="गौरा">गौरा</option>
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label for="nyaySelect">न्याय पंचायत:</label>
+      <select id="nyaySelect" disabled>
+        <option value="">-- पहले ब्लॉक चुनें --</option>
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label for="villageSelect">गांव:</label>
+      <select id="villageSelect" disabled>
+        <option value="">-- पहले न्याय पंचायत चुनें --</option>
+      </select>
+    </div>
+  
+    <div class="form-actions">
+      <button type="submit" class="filter-btn" id="filter-btn" disabled>परिवार देखें</button>
+    </div>
+  </form>
+  <!-- <div class="search-by-name-container">
 
-  <div class="form-group">
-    <label for="nyaySelect">न्याय पंचायत:</label>
-    <select id="nyaySelect" disabled>
-      <option value="">-- पहले ब्लॉक चुनें --</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="villageSelect">गांव:</label>
-    <select id="villageSelect" disabled >
-      <option value="">-- पहले न्याय पंचायत चुनें --</option>
-    </select>
-  </div>
-
-  <div class="form-actions">
-    <button type="submit" class="filter-btn" id="filter-btn" disabled>परिवार देखें</button>
-  </div>
-</form>
+  </div> -->
 </section>
 
   <section class="family-results-section" id="family-results-section">
