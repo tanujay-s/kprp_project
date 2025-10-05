@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  adjustFooter();
-  window.addEventListener('resize', adjustFooter);
+ 
 });
 
 let slideIndex = 0;
@@ -24,22 +23,3 @@ function showSlides() {
 }
 
 
-function adjustFooter() {
-  const main = document.getElementById('family-main');
-  const footer = document.querySelector('footer');
-
-  if (!main || !footer) {
-    console.log('Main or footer not found');
-    return;
-  }
-
-  const contentHeight = main.offsetTop + main.offsetHeight;
-  const viewportHeight = window.innerHeight;
-
-  if (contentHeight + footer.offsetHeight < viewportHeight) {
-    const extraSpace = viewportHeight - (contentHeight + footer.offsetHeight);
-    footer.style.marginTop = `${extraSpace}px`;
-  } else {
-    footer.style.marginTop = '20px';
-  }
-}

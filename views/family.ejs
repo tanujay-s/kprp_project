@@ -6,12 +6,12 @@
   <p class="page-subtitle">क्षेत्र का चयन करें और संबंधित परिवारों को देखें</p>
 
 <div class="family-search-tabs" style="text-align: center;">
-  <button type="button" class="family-search-tab-btn active" id="familySearchByLocationTab">स्थान के अनुसार
+  <button type="button" class="family-search-tab-btn active pointer" id="familySearchByLocationTab">स्थान के अनुसार
     खोजें</button>
-  <button type="button" class="family-search-tab-btn" id="familySearchByNameTab">परिवार के नाम से खोजें</button>
+  <button type="button" class="family-search-tab-btn pointer" id="familySearchByNameTab">परिवार के नाम से खोजें</button>
 </div>
 
-<section class="admin-member-form-container">
+<section class="admin-member-form-container" id="adminMemberPlaceSection">
   <form class="admin-member-form">
     <div class="form-group">
       <label for="blockSelect">ब्लॉक:</label>
@@ -39,9 +39,25 @@
       <button type="submit" class="filter-btn" id="filter-btn" disabled>परिवार देखें</button>
     </div>
   </form>
-  <!-- <div class="search-by-name-container">
-
+</section>
+<section class="admin-member-form-container" id="adminMemberNameSection">
+  <!-- <div class="form-group" style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem 1.5rem; width: 100%; box-sizing: border-box;">
+    <label for="nameSearchInput" style="font-weight: 700;">नाम से खोजें:</label>
+    <input type="text" id="nameSearchInput" placeholder="परिवार का नाम दर्ज करें" autocomplete="off" style="text-align: center; height: 30px;" />
+    <ul id="suggestionList" class="suggestion-list"></ul>
   </div> -->
+  <div class="form-group"
+    style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem 1.5rem; width: 100%; box-sizing: border-box; position: relative;">
+    <label for="nameSearchInput" style="font-weight: 700;">नाम से खोजें:</label>
+    <div style="position: relative; width: 100%;">
+      <input type="text" id="nameSearchInput" placeholder="परिवार का नाम दर्ज करें" autocomplete="off"
+        style="text-align: center; height: 30px; width: 100%;" />
+      <ul id="suggestionList" class="suggestion-list"></ul>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="filter-btn" id="searchByNameBtn">परिवार खोजें</button>
+  </div>
 </section>
 
   <section class="family-results-section" id="family-results-section">
@@ -49,7 +65,7 @@
   </section>
 
   <section class="family-list">
-    <p class="no-data">कृपया ऊपर दिए गए विकल्पों में से क्षेत्र का चयन करें।</p>
+    <p class="no-data">कृपया ऊपर दिए गए विकल्पों में से चयन करें।</p>
   </section>
   <section class="back__btn">
      <button id="backBtn">पुनः परिवार खोजे</button>

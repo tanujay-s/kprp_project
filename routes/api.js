@@ -80,12 +80,13 @@ router.post("/member/add", async (req, res) => {
 
 router.get("/family/search", async (req, res) => {
   try {
-    const { block, village, nyayPanchayat } = req.query;
+    const { block, village, nyayPanchayat , id } = req.query;
 
     let query = {};
     if (block) query.block = block;
     if (village) query.village = village;
     if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
+    if(id) query._id = id;
     
     const families = await Family.find(query).sort({ createdAt: 1 });
 
