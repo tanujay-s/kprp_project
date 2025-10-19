@@ -409,63 +409,6 @@
                     <% }) %>
                         <% } %>
     </div>
-
-    <!-- <section class="family-members">
-        <div class="header">
-            <h2>Family Members</h2>
-            <a class="btn add" id="openMemberAddModal">Add Member</a>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Father's Name</th>
-                    <th>Others</th>
-                    <th>Year</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (members.length===0) { %>
-                    <tr>
-                        <td colspan="5" style="text-align:center;">No members found</td>
-                    </tr>
-                    <% } else { %>
-                        <% members.forEach(member=> { %>
-                            <tr>
-                                <td>
-                                    <%= member.name %>
-                                </td>
-                                <td>
-                                    <%= member.guardianName %>
-                                </td>
-                                <td>
-                                    <%= member.otherDetails %>
-                                </td>
-                                <% if (member.year) { %>
-                                    <td>
-                                        <%= member.year.toLocaleDateString("en-GB") %>
-                                        (<%= member.yearType === "birth" ? "जन्म" : "मृत्यु" %>)
-                                    </td>
-                                <% }  else {%>
-                                        <td>-</td>
-                                    <%} %>
-                                <td>
-                                    <a class="btn small edit openMemberEdit"  
-                                        data-id="<%= member._id %>" 
-                                        data-name="<%= member.name %>"
-                                        data-guardian="<%= member.guardianName %>" 
-                                        data-other="<%= member.otherDetails %>" 
-                                        data-year="<%= member.year %>"
-                                        data-yeartype="<%= member.yearType %>">Edit</a>                                    
-                                    <button type="button" class="btn small delete" onclick="deleteMember('<%= member._id %>')">Delete</button>
-                                </td>
-                            </tr>
-                            <% }) %>
-                                <% } %>
-            </tbody>
-        </table>
-    </section> -->
    
 </div>
 

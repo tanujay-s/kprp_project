@@ -46,10 +46,39 @@ router.get('/add-family', requireAdmin, (req, res) => {
   res.render('addFamily', { activePage: "" });
 });
 
+// router.get("/dashboard", requireAdmin, async (req, res) => {
+//   try {
+//     const families = await Family.find().sort({ createdAt: 1 });
+//     res.render("dashboard", { families, activePage: "dashboard" }); 
+//   } catch (err) {
+//     console.error("Error fetching families:", err);
+//     res.status(500).send("Error loading families");
+//   }
+// });
 router.get("/dashboard", requireAdmin, async (req, res) => {
   try {
-    const families = await Family.find().sort({ createdAt: 1 });
-    res.render("dashboard", { families, activePage: "dashboard" }); 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [families, totalFamilies] = await Promise.all([
+      Family.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Family.countDocuments()
+    ]);
+
+    const totalPages = Math.ceil(totalFamilies / limit);
+
+    res.render("dashboard", {
+      families,
+      currentPage: page,
+      totalPages,
+      totalFamilies,
+      limit, // 👈 add this line
+      activePage: "dashboard"
+    });
   } catch (err) {
     console.error("Error fetching families:", err);
     res.status(500).send("Error loading families");
