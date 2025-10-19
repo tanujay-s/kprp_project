@@ -80,12 +80,13 @@ router.post("/member/add", async (req, res) => {
 
 router.get("/family/search", async (req, res) => {
   try {
-    const { block, village, nyayPanchayat } = req.query;
+    const { block, village, nyayPanchayat , id } = req.query;
 
     let query = {};
     if (block) query.block = block;
     if (village) query.village = village;
     if (nyayPanchayat) query.nyayPanchayat = nyayPanchayat;
+    if(id) query._id = id;
     
     const families = await Family.find(query).sort({ createdAt: 1 });
 
@@ -149,6 +150,36 @@ router.put("/member/edit/:id", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Error updating member", error: error.message });
+  }
+});
+
+router.put("/family/edit/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let updates = req.body;
+
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === "" || updates[key] === undefined) {
+        delete updates[key];
+      }
+    });
+
+    const updatedFamily = await Family.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedFamily) {
+      return res.status(404).json({ message: "Family not found" });
+    }
+
+    res.json({
+      message: "Family details updated successfully",
+      family: updatedFamily
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating family", error: error.message });
   }
 });
 

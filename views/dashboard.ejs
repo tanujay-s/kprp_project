@@ -1,155 +1,4 @@
 <%- include('shared/header') %>
-<!-- <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f5f7fa;
-  color: #333;
-  line-height: 1.5;
-}
-
-.main-content {
-  padding: 25px;
-}
-
-.content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease-in-out;
-}
-
-.content:hover {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-}
-
-.content h2 {
-  margin-bottom: 20px;
-  font-size: 20px;
-  color: #222;
-  font-weight: 600;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-thead {
-  background: #f0f2f5;
-}
-
-table th, 
-table td {
-  padding: 14px 12px;
-  text-align: center;
-  border-bottom: 1px solid #e6e6e6;
-}
-
-table th {
-  font-weight: 600;
-  color: #444;
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-}
-
-table tr:hover td {
-  background: #fafafa;
-}
-
-.view-btn {
-  color: #0d6efd;
-  text-decoration: none;
-  font-weight: 500;
-  margin-right: 12px;
-  transition: color 0.3s;
-}
-
-.view-btn:hover {
-  color: #084298;
-  text-decoration: underline;
-}
-
-.delete-btn {
-  background: #dc3545;
-  color: #fff;
-  border: none;
-  padding: 7px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background 0.3s ease-in-out;
-}
-
-.delete-btn:hover {
-  background: #b02a37;
-}
-.btn.add {
-  border-radius: 5px;
-  height: 20px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-  width: 80px;
-  background: #28a745;
-  color: white;
-}
-</style> -->
-
-  <!-- <div class="main-content">
-
-    <div class="content">
-      <div style="display: flex; align-items: baseline; justify-content: space-between;">
-        <h2>Family Management</h2>
-        <a href="/admin/add-family" class="btn add">Add Family</a>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>CLAN NAME (वंश)</th>
-            <th>VILLAGE (गांव)</th>
-            <th>NYAY PANCHAYAT (न्याय पंचायत)</th>
-            <th>BLOCK (ब्लॉक)</th>
-            <th>OLD RESIDENCE (पूर्व निवास)</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (families.length === 0) { %>
-            <tr>
-              <td colspan="7" style="text-align:center; color:red;">No families added yet.</td>
-            </tr>
-          <% } else { %>
-            <% families.forEach(family => { %>
-              <tr>
-                <td><%= family.lineageName %></td>
-                <td><%= family.village %></td>
-                <td><%= family.nyayPanchayat %></td>
-                <td><%= family.block %></td>
-                <td><%= family.oldResidence %></td>
-                <td>
-                  <a href="/admin/<%= family._id %>/members" class="view-btn">View Family</a>
-                </td>
-              </tr>
-            <% }) %>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 
 <style>
   * {
@@ -253,6 +102,59 @@ table tr:hover td {
   .card-body p {
     margin-bottom: 5px;
   }
+
+  .pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px 0;
+  font-family: "Poppins", sans-serif;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #333;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+  font-size: 14px;
+}
+
+.pagination a:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  pointer-events: none;
+}
+
+.pagination span {
+  color: #555;
+}
+
+@media (max-width: 600px) {
+  .pagination {
+    gap: 6px;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
 </style>
   <div class="main-content">
     <div class="header">
@@ -288,6 +190,28 @@ table tr:hover td {
           </div>
           <% }) %>
             <% } %>
+  </div>
+
+  <div class="pagination">
+    <% if (currentPage> 1) { %>
+      <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>">Prev</a>
+      <% } %>
+  
+        <% for (let i=1; i <=totalPages; i++) { %>
+          <% if (i===currentPage) { %>
+            <span class="active">
+              <%= i %>
+            </span>
+            <% } else { %>
+              <a href="?page=<%= i %>&limit=<%= limit %>">
+                <%= i %>
+              </a>
+              <% } %>
+                <% } %>
+  
+                  <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next</a>
+                    <% } %>
   </div>
 
   <script>
