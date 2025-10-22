@@ -5,12 +5,14 @@
     background: white;
     max-width: 600px;
     margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 20px;
   }
 
   .form-title {
     text-align: center;
-    margin-bottom: 20px;
+    margin: 0;
   }
 
   .admin-family-form .form-group {
@@ -72,10 +74,35 @@
       font-size: 18px;
     }
   }
+  .btn-back {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  margin-top: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #0056b3;
+}
+.main-heading{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 </style>
 
 <main class="admin-family-form-container">
-  <h2 class="form-title">नया परिवार जोड़ें</h2>
+  <div class="main-heading">
+    <button class="btn-back" onclick="history.back()">Back</button>
+    <h2 class="form-title">नया परिवार जोड़ें</h2>
+  </div>
 
   <div class="admin-family-form">
     <div id="family-fields">
@@ -92,22 +119,22 @@
       <div class="form-group">
         <label for="adminBlockSelect">ब्लॉक:</label>
         <select name="block" id="adminBlockSelect">
-          <option value="">-- ब्लॉक चुनें --</option>
-          <option value="गौरा">गौरा</option>
+          <option value="" disabled selected>-- ब्लॉक चुनें --</option>
+          <!-- <option value="गौरा">गौरा</option> -->
         </select>
       </div>
 
       <div class="form-group">
         <label for="adminNyaySelect">न्याय पंचायत:</label>
         <select name="nyay" id="adminNyaySelect" disabled>
-          <option value="">-- पहले ब्लॉक चुनें --</option>
+          <option value="" disabled selected>-- पहले ब्लॉक चुनें --</option>
         </select>
       </div>
 
       <div class="form-group">
         <label for="adminVillageSelect">गांव:</label>
         <select name="village" id="adminVillageSelect" disabled>
-          <option value="">-- पहले न्याय पंचायत चुनें --</option>
+          <option value="" disabled selected>-- पहले न्याय पंचायत चुनें --</option>
         </select>
       </div>
 
@@ -124,7 +151,298 @@
 </main>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  const blockSelect = document.getElementById('adminBlockSelect');
+  const nyaySelect = document.getElementById('adminNyaySelect');
+  const villageSelect = document.getElementById('adminVillageSelect');
+  const addFamilyBtn = document.getElementById('addFamilyBtn');
+
+  const lineageName = document.getElementById('lineageName');
+  const clan = document.getElementById('clan');
+  const oldResidence = document.getElementById('oldResidence');
+
+  try {
+    // Fetch hierarchy from backend
+    const res = await fetch("/admin/hierarchy");
+    if (!res.ok) throw new Error("Failed to load hierarchy");
+    const data = await res.json();
+
+    const { blocks, nyayPanchayats, villages } = data;
+
+    // Store for filtering
+    window.nyayPanchayats = nyayPanchayats;
+    window.villages = villages;
+
+    // Populate blocks
+    populateDropdown(blockSelect, blocks);
+
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Failed to load hierarchy data");
+  }
+
+  // Populate dropdown helper (value = name)
+  function populateDropdown(selectElement, list) {
+    if (!selectElement) return;
+    selectElement.innerHTML = '<option value="" disabled selected>-- Choose --</option>';
+    list.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.name; // store name for compatibility
+      option.textContent = item.name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // Filter nyay panchayats by selected block
+  blockSelect.addEventListener("change", () => {
+    const blockName = blockSelect.value;
+    const filteredPanchayats = (window.nyayPanchayats || []).filter(
+      p => p.blockId && p.blockId.name === blockName
+    );
+
+    if (filteredPanchayats.length) {
+      nyaySelect.disabled = false;
+      populateDropdown(nyaySelect, filteredPanchayats);
+    } else {
+      nyaySelect.disabled = true;
+      nyaySelect.innerHTML = '<option value="" disabled selected>No Panchayats found</option>';
+    }
+
+    villageSelect.disabled = true;
+    villageSelect.innerHTML = '<option value="" disabled selected>-- पहले न्याय पंचायत चुनें --</option>';
+  });
+
+  // Filter villages by selected nyay panchayat
+  nyaySelect.addEventListener("change", () => {
+    const nyayName = nyaySelect.value;
+    const filteredVillages = (window.villages || []).filter(
+      v => v.nyayPanchayatId && v.nyayPanchayatId.name === nyayName
+    );
+
+    if (filteredVillages.length) {
+      villageSelect.disabled = false;
+      populateDropdown(villageSelect, filteredVillages);
+    } else {
+      villageSelect.disabled = true;
+      villageSelect.innerHTML = '<option value="" disabled selected>No villages found</option>';
+    }
+  });
+
+  addFamilyBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    if (!lineageName.value || !clan.value || !blockSelect.value || !nyaySelect.value || !villageSelect.value) {
+      return alert("⚠️ Please fill all required fields.");
+    }
+
+    try {
+      const res = await fetch("/family/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lineageName: lineageName.value,
+          clan: clan.value,
+          village: villageSelect.value,
+          nyayPanchayat: nyaySelect.value,
+          block: blockSelect.value,
+          oldResidence: oldResidence.value,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add family");
+
+      const data = await res.json();
+      alert(`✅ ${data.message}\nFamily Name: ${data.family.lineageName}`);
+
+      lineageName.value = "";
+      clan.value = "";
+      oldResidence.value = "";
+      blockSelect.value = "";
+      nyaySelect.value = "";
+      villageSelect.value = "";
+      nyaySelect.disabled = true;
+      villageSelect.disabled = true;
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error Adding Family");
+    }
+  });
+});
+</script>
+
+
+<!-- <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const blockSelect = document.getElementById('adminBlockSelect');
+  const nyaySelect = document.getElementById('adminNyaySelect');
+  const villageSelect = document.getElementById('adminVillageSelect');
+  const addFamilyBtn = document.getElementById('addFamilyBtn');
+
+  const lineageName = document.getElementById('lineageName');
+  const clan = document.getElementById('clan');
+  const oldResidence = document.getElementById('oldResidence');
+
+  try {
+    // Fetch all hierarchy data from backend
+    const res = await fetch("/admin/hierarchy");
+    if (!res.ok) throw new Error("Failed to load hierarchy");
+    const data = await res.json();
+
+    const { blocks, nyayPanchayats, villages } = data;
+
+    // Store for filtering later
+    window.nyayPanchayats = nyayPanchayats;
+    window.villages = villages;
+
+    // Populate block dropdown
+    populateDropdown(blockSelect, blocks);
+
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Failed to load hierarchy data");
+  }
+
+  // Populate dropdown helper
+  function populateDropdown(selectElement, list) {
+    if (!selectElement) return;
+    selectElement.innerHTML = '<option value="" disabled selected>-- Choose --</option>';
+    list.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item._id;
+      option.textContent = item.name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  // When block changes -> populate nyay panchayats
+  blockSelect.addEventListener("change", () => {
+    const blockId = blockSelect.value;
+    const filteredPanchayats = (window.nyayPanchayats || []).filter(
+      p => p.blockId && p.blockId._id === blockId
+    );
+
+    if (filteredPanchayats.length) {
+      nyaySelect.disabled = false;
+      populateDropdown(nyaySelect, filteredPanchayats);
+    } else {
+      nyaySelect.disabled = true;
+      nyaySelect.innerHTML = '<option value="" disabled selected>No Panchayats found</option>';
+    }
+
+    villageSelect.disabled = true;
+    villageSelect.innerHTML = '<option value="" disabled selected>-- पहले न्याय पंचायत चुनें --</option>';
+  });
+
+  // When nyay panchayat changes -> populate villages
+  nyaySelect.addEventListener("change", () => {
+    const nyayId = nyaySelect.value;
+    const filteredVillages = (window.villages || []).filter(
+      v => v.nyayPanchayatId && v.nyayPanchayatId._id === nyayId
+    );
+
+    if (filteredVillages.length) {
+      villageSelect.disabled = false;
+      populateDropdown(villageSelect, filteredVillages);
+    } else {
+      villageSelect.disabled = true;
+      villageSelect.innerHTML = '<option value="" disabled selected>No villages found</option>';
+    }
+  });
+
+  // Add family submit
+  addFamilyBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/family/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lineageName: lineageName.value,
+          clan: clan.value,
+          village: villageSelect.value,
+          nyayPanchayat: nyaySelect.value,
+          block: blockSelect.value,
+          oldResidence: oldResidence.value,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add family");
+
+      const data = await res.json();
+      alert(`✅ ${data.message}\nFamily Name: ${data.family.lineageName}`);
+      // Optional: reset form
+      lineageName.value = "";
+      clan.value = "";
+      oldResidence.value = "";
+      blockSelect.value = "";
+      nyaySelect.value = "";
+      villageSelect.value = "";
+      nyaySelect.disabled = true;
+      villageSelect.disabled = true;
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error Adding Family");
+    }
+  });
+});
+</script> -->
+
+<!-- <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+
+    try {
+    // Fetch all data
+    const response = await fetch("/admin/hierarchy");
+    const data = await response.json();
+
+    const { blocks, nyayPanchayats } = data;
+
+    // Populate both block dropdowns
+    populateDropdown("adminBlockSelect", blocks);
+    // populateDropdown("adminNyaySelect", nyayPanchayats);
+    // populateDropdown("adminVillageSelect", blocks);
+
+    // Store nyay panchayats for filtering later
+    window.nyayPanchayats = nyayPanchayats;
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+
+  // Populate dropdown helper
+function populateDropdown(id, list) {
+  const select = document.getElementById(id);
+  if (!select) return;
+
+  select.innerHTML = '<option value="" disabled selected>Choose...</option>';
+  list.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item._id;
+    option.textContent = item.name;
+    select.appendChild(option);
+  });
+}
+
+document.getElementById("adminNyaySelect").addEventListener("change", (e) => {
+  const blockId = e.target.value;
+  const nyaySelect = document.getElementById("nyaypanchayat-select");
+
+  nyaySelect.disabled = true;
+  nyaySelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+  const filteredPanchayats = (window.nyayPanchayats || []).filter(
+    p => p.blockId && p.blockId._id === blockId
+  );
+
+  if (filteredPanchayats.length) {
+    populateDropdown("nyaypanchayat-select", filteredPanchayats);
+    nyaySelect.disabled = false;
+  } else {
+    nyaySelect.innerHTML = '<option value="" disabled selected>No Panchayats found</option>';
+  }
+});
+
     const blockSelect = document.getElementById('adminBlockSelect');
     const nyaySelect = document.getElementById('adminNyaySelect');
     const villageSelect = document.getElementById('adminVillageSelect');
@@ -140,41 +458,41 @@
       }
     };
 
-    blockSelect.addEventListener("change", () => {
-      nyaySelect.innerHTML = '<option value="">-- न्याय पंचायत चुनें --</option>';
-      villageSelect.innerHTML = '<option value="">-- पहले न्याय पंचायत चुनें --</option>';
-      nyaySelect.disabled = true;
-      villageSelect.disabled = true;
+    // blockSelect.addEventListener("change", () => {
+    //   nyaySelect.innerHTML = '<option value="">-- न्याय पंचायत चुनें --</option>';
+    //   villageSelect.innerHTML = '<option value="">-- पहले न्याय पंचायत चुनें --</option>';
+    //   nyaySelect.disabled = true;
+    //   villageSelect.disabled = true;
 
-      const block = blockSelect.value;
-      if (block && hierarchy[block]) {
-        nyaySelect.disabled = false;
-        Object.keys(hierarchy[block]).forEach(nyay => {
-          const opt = document.createElement("option");
-          opt.value = nyay;
-          opt.textContent = nyay;
-          nyaySelect.appendChild(opt);
-        });
-      }
-    });
+    //   const block = blockSelect.value;
+    //   if (block && hierarchy[block]) {
+    //     nyaySelect.disabled = false;
+    //     Object.keys(hierarchy[block]).forEach(nyay => {
+    //       const opt = document.createElement("option");
+    //       opt.value = nyay;
+    //       opt.textContent = nyay;
+    //       nyaySelect.appendChild(opt);
+    //     });
+    //   }
+    // });
 
-    nyaySelect.addEventListener("change", () => {
-      villageSelect.innerHTML = '<option value="">-- गांव चुनें --</option>';
-      villageSelect.disabled = true;
+    // nyaySelect.addEventListener("change", () => {
+    //   villageSelect.innerHTML = '<option value="">-- गांव चुनें --</option>';
+    //   villageSelect.disabled = true;
 
-      const block = blockSelect.value;
-      const nyay = nyaySelect.value;
+    //   const block = blockSelect.value;
+    //   const nyay = nyaySelect.value;
 
-      if (nyay && hierarchy[block][nyay]) {
-        villageSelect.disabled = false;
-        hierarchy[block][nyay].forEach(village => {
-          const opt = document.createElement("option");
-          opt.value = village;
-          opt.textContent = village;
-          villageSelect.appendChild(opt);
-        });
-      }
-    });
+    //   if (nyay && hierarchy[block][nyay]) {
+    //     villageSelect.disabled = false;
+    //     hierarchy[block][nyay].forEach(village => {
+    //       const opt = document.createElement("option");
+    //       opt.value = village;
+    //       opt.textContent = village;
+    //       villageSelect.appendChild(opt);
+    //     });
+    //   }
+    // });
 
     addFamilyBtn.addEventListener("click", async (e) => {
       e.preventDefault();
@@ -202,6 +520,6 @@
       }
     });
   });
-</script>
+</script> -->
 
 <%- include('shared/footer') %>
