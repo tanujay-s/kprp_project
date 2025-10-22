@@ -1,0 +1,306 @@
+<%- include('shared/header') %>
+
+<style>
+  /* body {
+    font-family: Arial, sans-serif;
+    background-color: #f8fafc;
+    margin: 0;
+    padding: 32px;
+    color: #333;
+  } */
+  h2 {
+    text-align: center;
+    margin-bottom: 32px;
+    color: #222;
+    margin: 0;
+  }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .input-block {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .input-block h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #1d4ed8; /* Blue */
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  select:focus {
+    border-color: #3b82f6; /* Lighter blue */
+    outline: none;
+  }
+  button {
+    background-color: #22c55e; /* Green */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:hover,
+  button:focus {
+    background-color: #16a34a; /* Darker green */
+  }
+  .btn-back {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  margin-top: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #0056b3;
+}
+.main-heading{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+</style>
+
+<div class="container">
+    <div class="main-heading">
+        <button class="btn-back" onclick="history.back()">Back</button>
+        <h2>Add New Locations</h2>
+    </div>
+
+  <!-- Add New Block -->
+  <section class="input-block" aria-labelledby="add-block-label">
+    <h2 id="add-block-label">Add New Block</h2>
+    <form id="form-add-block">
+      <label for="block-name">Block Name</label>
+      <input type="text" id="block-name" name="block-name" placeholder="Enter new block name" required />
+      <button type="submit">Add Block</button>
+    </form>
+  </section>
+
+  <!-- Add New Nyay Panchayat -->
+  <section class="input-block" aria-labelledby="add-panchayat-label">
+    <h2 id="add-panchayat-label">Add New Nyay Panchayat</h2>
+    <form id="form-add-panchayat">
+      <label for="block-select-panchayat">Select Block</label>
+      <select id="block-select-panchayat" name="select-block-for-panchayat" required>
+        <option value="" disabled selected>Choose a block</option>
+        <!-- Dynamically populate blocks here -->
+      </select>
+      
+      <label for="panchayat-name">Nyay Panchayat Name</label>
+      <input type="text" id="panchayat-name" name="panchayat-name" placeholder="Enter new Nyay Panchayat name" required />
+      <button type="submit">Add Nyay Panchayat</button>
+    </form>
+  </section>
+
+  <!-- Add New Village -->
+  <section class="input-block" aria-labelledby="add-village-label">
+    <h2 id="add-village-label">Add New Village</h2>
+    <form id="form-add-village">
+      <label for="block-select-village">Select Block</label>
+      <select id="block-select-village" name="select-block-for-village" required>
+        <option value="" disabled selected>Choose a block</option>
+        <!-- Dynamically populate blocks here -->
+      </select>
+
+      <label for="nyaypanchayat-select">Select Nyay Panchayat</label>
+      <select id="nyaypanchayat-select" name="select-panchayat-for-village" required disabled>
+        <option value="" disabled selected>Choose a Nyay Panchayat</option>
+        <!-- Dynamically populate Panchayats after block selection -->
+      </select>
+      
+      <label for="village-name">Village Name</label>
+      <input type="text" id="village-name" name="village-name" placeholder="Enter new village name" required />
+      <button type="submit">Add Village</button>
+    </form>
+  </section>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Fetch all data
+    const response = await fetch("/admin/hierarchy");
+    const data = await response.json();
+
+    const { blocks, nyayPanchayats } = data;
+
+    // Populate both block dropdowns
+    populateDropdown("block-select-panchayat", blocks);
+    populateDropdown("block-select-village", blocks);
+
+    // Store nyay panchayats for filtering later
+    window.nyayPanchayats = nyayPanchayats;
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+});
+
+// Populate dropdown helper
+function populateDropdown(id, list) {
+  const select = document.getElementById(id);
+  if (!select) return;
+
+  select.innerHTML = '<option value="" disabled selected>Choose...</option>';
+  list.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item._id;
+    option.textContent = item.name;
+    select.appendChild(option);
+  });
+}
+
+// When user selects a block in "Add Village" form → load its Nyay Panchayats
+document.getElementById("block-select-village").addEventListener("change", (e) => {
+  const blockId = e.target.value;
+  const nyaySelect = document.getElementById("nyaypanchayat-select");
+
+  nyaySelect.disabled = true;
+  nyaySelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+  const filteredPanchayats = (window.nyayPanchayats || []).filter(
+    p => p.blockId && p.blockId._id === blockId
+  );
+
+  if (filteredPanchayats.length) {
+    populateDropdown("nyaypanchayat-select", filteredPanchayats);
+    nyaySelect.disabled = false;
+  } else {
+    nyaySelect.innerHTML = '<option value="" disabled selected>No Panchayats found</option>';
+  }
+});
+
+
+// ✅ Add Block Form Submit
+document.getElementById("form-add-block").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const blockName = document.getElementById("block-name").value.trim();
+  const messageElement = document.getElementById("message");
+
+  if (!blockName) {
+    messageElement.textContent = "⚠️ Please enter a block name.";
+    return;
+  }
+
+  try {
+    const response = await fetch("/admin/block", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: blockName })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+    //   messageElement.textContent = "✅ " + data.message;
+    alert(response.ok ? `✅ ${data.message}` : `❌ ${data.error || "Failed to add"}`);
+      document.getElementById("form-add-block").reset();
+      location.reload();
+    } else {
+    //   messageElement.textContent = "❌ " + (data.error || "Something went wrong");
+    alert(`❌ Error: ${data.error || "Something went wrong"}`);
+    }
+  } catch (error) {
+    console.error(error);
+    alert("⚠️ Server error. Please try again later.");
+    // messageElement.textContent = "❌ Network error: " + error.message;
+  }
+});
+
+
+// ✅ Add Nyay Panchayat Form Submit
+document.getElementById("form-add-panchayat").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = document.getElementById("panchayat-name").value.trim();
+  const blockId = document.getElementById("block-select-panchayat").value;
+
+  if (!name || !blockId) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    const response = await fetch("/admin/nyaypanchayat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, blockId })
+    });
+
+    const data = await response.json();
+    alert(response.ok ? `✅ ${data.message}` : `❌ ${data.error || "Failed to add"}`);
+    document.getElementById("form-add-panchayat").reset();
+    location.reload();
+  } catch (error) {
+    console.error(error);
+    alert("❌ Network error: " + error.message);
+  }
+});
+
+
+// ✅ Add Village Form Submit
+document.getElementById("form-add-village").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = document.getElementById("village-name").value.trim();
+  const blockId = document.getElementById("block-select-village").value;
+  const nyayPanchayatId = document.getElementById("nyaypanchayat-select").value;
+
+  if (!name || !blockId || !nyayPanchayatId) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    const response = await fetch("/admin/village", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, blockId, nyayPanchayatId })
+    });
+
+    const data = await response.json();
+    alert(response.ok ? `✅ ${data.message}` : `❌ ${data.error || "Failed to add"}`);
+    document.getElementById("form-add-village").reset();
+    location.reload();
+  } catch (error) {
+    console.error(error);
+    alert("❌ Network error: " + error.message);
+  }
+});
+</script>
+
+
+
+<%- include('shared/footer') %>

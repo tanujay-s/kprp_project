@@ -145,6 +145,13 @@
 }
 
 @media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .actions-btns {
+    margin-top: 12px;
+  }
   .pagination {
     gap: 6px;
   }
@@ -155,11 +162,39 @@
     font-size: 13px;
   }
 }
+
+.actions-btns{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btn-manage-locations {
+  margin-left: 12px;
+  border-radius: 5px;
+    height: 30px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 130px;
+    background: #28a745;
+    color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-manage-locations:hover {
+  background-color: #218838;
+}
 </style>
   <div class="main-content">
     <div class="header">
       <h2>Family Management</h2>
-      <a href="/admin/add-family" class="btn add">Add Family</a>
+      <div class="actions-btns">
+        <a href="/admin/add-family" class="btn add">Add Family</a>
+        <a href="/admin/add-location" class="btn-manage-locations">Manage Locations</a>
+      </div>
     </div>
   
     <% if(families.length===0){ %>
