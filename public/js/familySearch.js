@@ -103,97 +103,85 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    resultsDiv.innerHTML = data.map(family => {
+    resultsDiv.innerHTML = data.map((family, index) => {
       const members = [...family.members];
+      const familyInfo = `
+        <h6 class="family-meta">
+          (क्षत्रिय: ${family.clan}, ग्राम: ${family.village},
+          न्याय पंचायत: ${family.nyayPanchayat},
+          विकास खंड: ${family.block},
+          पूर्व निवास: ${family.oldResidence})
+        </h6>
+      `;
 
-      if (isMobile) {
-        if (members.length === 0) {
-          return `
-          <div class="family-card">
-            <h4>🏠 वंश: ${family.lineageName}</h4>
-            <h6 class="family-meta">
-              (क्षत्रिय: ${family.clan}, ग्राम: ${family.village},
-               न्याय पंचायत: ${family.nyayPanchayat},
-               विकास खंड: ${family.block},
-               पूर्व निवास: ${family.oldResidence})
-            </h6>
-            <p class="no-members" style="text-align:center;">अभी तक कोई सदस्य नहीं जोड़ा गया है।</p>
+      const memberList =
+        members.length === 0
+          ? `<p class="no-members" style="text-align:center;">अभी तक कोई सदस्य नहीं जोड़ा गया है।</p>`
+          : (isMobile
+            ? members.map(m => `
+              <div class="member-item">
+                <p><strong>नाम:</strong> ${m.name}</p>
+                <p><strong>पिता का नाम:</strong> ${m.guardianName}</p>
+                <p><strong>अन्य:</strong> ${m.otherDetails || "—"}</p>
+                ${m.year
+                ? `<p><strong>${m.yearType === "birth" ? "जन्म वर्ष:" : "मृत्यु वर्ष:"}</strong> ${new Date(m.year).toLocaleDateString("en-GB")}</p>`
+                : ""
+              }
+              </div>
+            `).join("")
+            : `
+              <table class="family-table">
+                <thead>
+                  <tr>
+                    <th>नाम</th>
+                    <th>पिता का नाम</th>
+                    <th>अन्य</th>
+                    <th>जन्म/मृत्यु वर्ष</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${members.map(m => `
+                    <tr>
+                      <td>${m.name}</td>
+                      <td>${m.guardianName}</td>
+                      <td>${m.otherDetails || "—"}</td>
+                      <td>${m.year ? new Date(m.year).toLocaleDateString("en-GB") + " (" + (m.yearType === "birth" ? "जन्म" : "मृत्यु") + ")" : "—"}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            `);
+
+      const isSingle = data.length === 1;
+      const isActiveClass = isSingle ? "active" : "";
+      const arrowSymbol = isSingle ? "▼" : "▶";
+
+      return `
+        <div class="family-box">
+          <div class="family-header" onclick="toggleFamily(${index})">
+            🏠 वंश: ${family.lineageName}
+            <span class="arrow">${arrowSymbol}</span>
           </div>
-        `;
-        }
-
-        const mobileCards = members.map(m => `
-        <div class="member-item">
-          <p><strong>नाम:</strong> ${m.name}</p>
-          <p><strong>पिता का नाम:</strong> ${m.guardianName}</p>
-          <p><strong>अन्य:</strong> ${m.otherDetails || "—"}</p>
-          ${m.year ? `<p><strong>${m.yearType === "birth" ? "जन्म वर्ष:" : "मृत्यु वर्ष:"}</strong> ${new Date(m.year).toLocaleDateString("en-GB")}</p>` : ""}
-        </div>
-      `).join("");
-
-        return `
-        <div class="family-card">
-          <h4>🏠 वंश: ${family.lineageName}</h4>
-          <h6 class="family-meta">
-            (क्षत्रिय: ${family.clan}, ग्राम: ${family.village},
-             न्याय पंचायत: ${family.nyayPanchayat},
-             विकास खंड: ${family.block},
-             पूर्व निवास: ${family.oldResidence})
-          </h6>
-          ${mobileCards}
+          <div class="family-content ${isActiveClass}" id="family-${index}">
+            ${familyInfo}
+            ${memberList}
+          </div>
         </div>
       `;
-      } else {
-        if (members.length === 0) {
-          return `
-          <div class="table-container">
-            <h3 style="text-align:center;">🏠 वंश: ${family.lineageName}</h3>
-            <h6 class="family-meta">
-              (क्षत्रिय: ${family.clan}, ग्राम: ${family.village},
-               न्याय पंचायत: ${family.nyayPanchayat},
-               विकास खंड: ${family.block},
-               पूर्व निवास: ${family.oldResidence})
-            </h6>
-            <p class="no-members" style="text-align:center;">अभी तक कोई सदस्य नहीं जोड़ा गया है।</p>
-          </div>
-        `;
-        }
-
-        const tableRows = members.map(m => `
-        <tr>
-          <td>${m.name}</td>
-          <td>${m.guardianName}</td>
-          <td>${m.otherDetails || "—"}</td>
-          <td>${m.year ? new Date(m.year).toLocaleDateString("en-GB") + " (" + (m.yearType === "birth" ? "जन्म" : "मृत्यु") + ")" : "—"}</td>
-        </tr>
-      `).join("");
-
-        return `
-        <div class="table-container">
-          <h3 style="text-align:center;">🏠 वंश: ${family.lineageName}</h3>
-          <h6 class="family-meta">
-            (क्षत्रिय: ${family.clan}, ग्राम: ${family.village},
-             न्याय पंचायत: ${family.nyayPanchayat},
-             विकास खंड: ${family.block},
-             पूर्व निवास: ${family.oldResidence})
-          </h6>
-          <table class="family-table">
-            <thead>
-              <tr>
-                <th>नाम</th>
-                <th>पिता का नाम</th>
-                <th>अन्य</th>
-                <th>जन्म/मृत्यु वर्ष</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${tableRows}
-            </tbody>
-          </table>
-        </div>
-      `;
-      }
     }).join("");
+
+    window.toggleFamily = function (index) {
+      document.querySelectorAll(".family-content").forEach((el, i) => {
+        const arrow = el.previousElementSibling.querySelector(".arrow");
+        if (i === index) {
+          el.classList.toggle("active");
+          arrow.textContent = el.classList.contains("active") ? "▼" : "▶";
+        } else {
+          el.classList.remove("active");
+          arrow.textContent = "▶";
+        }
+      });
+    };
   }
 
   // Common function to toggle visibility for results view
