@@ -462,4 +462,143 @@ router.get("/hierarchy", async (req, res) => {
   }
 });
 
+// ✅ DELETE Block (cascade: removes its Nyay Panchayats + Villages)
+router.delete("/block/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const block = await Block.findById(id);
+    if (!block) return res.status(404).json({ error: "Block not found" });
+
+    // Delete all related Nyay Panchayats and Villages
+    const deletedPanchayats = await NyayPanchayat.deleteMany({ blockId: id });
+    const deletedVillages = await Village.deleteMany({ blockId: id });
+
+    // Delete the block itself
+    await Block.findByIdAndDelete(id);
+
+    res.json({
+      message: `Block '${block.name}' deleted successfully.`,
+      deleted: {
+        nyayPanchayats: deletedPanchayats.deletedCount,
+        villages: deletedVillages.deletedCount,
+      },
+    });
+  } catch (err) {
+    console.error("Delete Block Error:", err);
+    res.status(500).json({ error: "Failed to delete Block and related data." });
+  }
+});
+
+// ✅ DELETE Nyay Panchayat (cascade: removes its Villages)
+router.delete("/nyaypanchayat/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const np = await NyayPanchayat.findById(id);
+    if (!np) return res.status(404).json({ error: "Nyay Panchayat not found" });
+
+    // Delete all villages under this Nyay Panchayat
+    const deletedVillages = await Village.deleteMany({ nyayPanchayatId: id });
+
+    // Delete the Panchayat itself
+    await NyayPanchayat.findByIdAndDelete(id);
+
+    res.json({
+      message: `Nyay Panchayat '${np.name}' deleted successfully.`,
+      deleted: { villages: deletedVillages.deletedCount },
+    });
+  } catch (err) {
+    console.error("Delete Nyay Panchayat Error:", err);
+    res.status(500).json({ error: "Failed to delete Nyay Panchayat and villages." });
+  }
+});
+
+// ✅ DELETE Village (just deletes one)
+router.delete("/village/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const village = await Village.findByIdAndDelete(id);
+    if (!village) return res.status(404).json({ error: "Village not found" });
+
+    res.json({ message: `Village '${village.name}' deleted successfully.` });
+  } catch (err) {
+    console.error("Delete Village Error:", err);
+    res.status(500).json({ error: "Failed to delete Village." });
+  }
+});
+
+// ✅ Update Block Name
+router.put("/block/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    if (!name?.trim()) return res.status(400).json({ error: "Name is required." });
+
+    const updatedBlock = await Block.findByIdAndUpdate(
+      id,
+      { name: name.trim() },
+      { new: true }
+    );
+
+    if (!updatedBlock) return res.status(404).json({ error: "Block not found." });
+
+    res.json({ message: "Block name updated successfully.", block: updatedBlock });
+  } catch (err) {
+    console.error("Update Block Error:", err);
+    res.status(500).json({ error: "Failed to update block name." });
+  }
+});
+
+// ✅ Update Nyay Panchayat Name
+router.put("/nyaypanchayat/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    if (!name?.trim()) return res.status(400).json({ error: "Name is required." });
+
+    const updatedNP = await NyayPanchayat.findByIdAndUpdate(
+      id,
+      { name: name.trim() },
+      { new: true }
+    );
+
+    if (!updatedNP)
+      return res.status(404).json({ error: "Nyay Panchayat not found." });
+
+    res.json({ message: "Nyay Panchayat name updated successfully.", nyayPanchayat: updatedNP });
+  } catch (err) {
+    console.error("Update Nyay Panchayat Error:", err);
+    res.status(500).json({ error: "Failed to update Nyay Panchayat name." });
+  }
+});
+
+// ✅ Update Village Name
+router.put("/village/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    if (!name?.trim()) return res.status(400).json({ error: "Name is required." });
+
+    const updatedVillage = await Village.findByIdAndUpdate(
+      id,
+      { name: name.trim() },
+      { new: true }
+    );
+
+    if (!updatedVillage)
+      return res.status(404).json({ error: "Village not found." });
+
+    res.json({ message: "Village name updated successfully.", village: updatedVillage });
+  } catch (err) {
+    console.error("Update Village Error:", err);
+    res.status(500).json({ error: "Failed to update Village name." });
+  }
+});
+
+
 module.exports = router;
